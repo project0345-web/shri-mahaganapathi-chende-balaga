@@ -103,7 +103,7 @@ async function notifyCustomer(booking,status){
 
 app.get('/api/health',async(_,res)=>{
   try{
-    await pool.query('SELECT 1');
+    await db.query('SELECT 1');
     res.json({ok:true,service:'Chende Booking API',database:true,notifications:{email:emailReady,adminEmails:adminEmails.length}});
     }catch(e){
 

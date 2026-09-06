@@ -71,13 +71,31 @@ function normalizePhone(phone) {
 function formatDate(date) {
   if (!date) return '';
 
-  const d = new Date(`${String(date).slice(0, 10)}T00:00:00`);
+  const value = String(date).slice(0, 10);
+  const [year, month, day] = value.split('-');
 
-  return d.toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
+  if (!year || !month || !day) return '';
+
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  const monthName = months[Number(month) - 1];
+
+  if (!monthName) return '';
+
+  return `${Number(day)} ${monthName} ${year}`;
 }
 
 function formatTime(time) {

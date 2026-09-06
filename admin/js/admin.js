@@ -1,4 +1,4 @@
-const API='http://localhost:5000/api';
+const API='https://shri-mahaganapathi-chende-balaga.onrender.com/api';
 const key=()=>sessionStorage.getItem('chende_admin_key');
 const loginScreen=document.getElementById('loginScreen');
 function showApp(){loginScreen.classList.add('hidden');load()}

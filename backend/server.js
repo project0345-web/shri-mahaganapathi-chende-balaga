@@ -105,8 +105,16 @@ app.get('/api/health',async(_,res)=>{
   try{
     await pool.query('SELECT 1');
     res.json({ok:true,service:'Chende Booking API',database:true,notifications:{email:emailReady,adminEmails:adminEmails.length}});
-  }catch(e){
-    res.status(503).json({ok:false,service:'Chende Booking API',database:false,error:'Database unavailable'});
+    }catch(e){
+
+    console.error('Database connection error:', e);
+
+    res.status(503).json({
+      ok:false,
+      service:'Chende Booking API',
+      database:false,
+      error:e.message
+    });
   }
 });
 

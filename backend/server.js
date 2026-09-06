@@ -69,12 +69,21 @@ function normalizePhone(phone) {
 }
 
 function formatDate(date) {
-  if (!date) return '';
+  if (!date) return 'Not provided';
 
-  const value = String(date).slice(0, 10);
-  const [year, month, day] = value.split('-');
+  // Handle MySQL DATE values like 2026-09-15
+  const value = String(date).trim().slice(0, 10);
 
-  if (!year || !month || !day) return '';
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    console.log('Unexpected event_date value:', date);
+    return value || 'Not provided';
+  }
+
+  const year = match[1];
+  const month = Number(match[2]);
+  const day = Number(match[3]);
 
   const months = [
     'January',
@@ -91,13 +100,12 @@ function formatDate(date) {
     'December'
   ];
 
-  const monthName = months[Number(month) - 1];
+  if (month < 1 || month > 12) {
+    return value;
+  }
 
-  if (!monthName) return '';
-
-  return `${Number(day)} ${monthName} ${year}`;
+  return `${day} ${months[month - 1]} ${year}`;
 }
-
 function formatTime(time) {
   if (!time) return '';
 

@@ -1,4 +1,4 @@
-const API='https://shri-mahaganapathi-chende-balaga.onrender.com';
+const API='https://shri-mahaganapathi-chende-balaga.onrender.com/api';
 const form=document.getElementById('statusForm');
 const msg=document.getElementById('statusMsg');
 const result=document.getElementById('statusResult');

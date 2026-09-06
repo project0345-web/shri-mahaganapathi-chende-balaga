@@ -1,4 +1,4 @@
-const API='http://localhost:5000/api';
+const API='https://shri-mahaganapathi-chende-balaga.onrender.com';
 const form=document.getElementById('statusForm');
 const msg=document.getElementById('statusMsg');
 const result=document.getElementById('statusResult');

@@ -17,13 +17,17 @@ function requireAdmin(req,res,next){
   next();
 }
 
-const pool=mysql.createPool({
-  host:process.env.DB_HOST||'localhost',
-  user:process.env.DB_USER||'root',
-  password:process.env.DB_PASSWORD||'',
-  database:process.env.DB_NAME||'chende_booking',
-  waitForConnections:true,
-  connectionLimit:10
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 const emailReady=Boolean(process.env.SMTP_HOST&&process.env.SMTP_USER&&process.env.SMTP_PASS&&process.env.SMTP_FROM);

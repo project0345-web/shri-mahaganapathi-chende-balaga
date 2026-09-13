@@ -667,3 +667,22 @@ app.listen(PORT, () => {
     `Chende Booking API running on http://localhost:${PORT}`
   );
 });
+app.get('/api/debug-db', async (_, res) => {
+  try {
+    const [[info]] = await db.query(`
+      SELECT
+        DATABASE() AS database_name,
+        COUNT(*) AS booking_count
+      FROM bookings
+    `);
+
+    res.json({
+      database: info.database_name,
+      bookings: Number(info.booking_count)
+    });
+  } catch (e) {
+    res.status(500).json({
+      error: e.message
+    });
+  }
+});

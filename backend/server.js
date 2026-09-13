@@ -667,22 +667,22 @@ app.listen(PORT, () => {
     `Chende Booking API running on http://localhost:${PORT}`
   );
 });
-app.get('/api/debug-db', async (_, res) => {
+app.post('/api/admin/clear-bookings', requireAdmin, async (_, res) => {
   try {
-    const [[info]] = await db.query(`
-      SELECT
-        DATABASE() AS database_name,
-        COUNT(*) AS booking_count
-      FROM bookings
-    `);
+    await db.query('DELETE FROM bookings');
+    await db.query('ALTER TABLE bookings AUTO_INCREMENT = 1');
 
     res.json({
-      database: info.database_name,
-      bookings: Number(info.booking_count)
+      ok: true,
+      message: 'All bookings cleared successfully.',
+      bookings: 0
     });
   } catch (e) {
+    console.error('Failed to clear bookings:', e);
+
     res.status(500).json({
-      error: e.message
+      ok: false,
+      error: 'Could not clear bookings.'
     });
   }
 });

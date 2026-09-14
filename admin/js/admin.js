@@ -1,198 +1,305 @@
-const API = 'https://shri-mahaganapathi-chende-balaga.onrender.com/api';
+const API =
+    'https://shri-mahaganapathi-chende-balaga.onrender.com/api';
 
-const key = () => sessionStorage.getItem('chende_admin_key');
+const key = () =>
+    sessionStorage.getItem('chende_admin_key');
 
-const loginScreen = document.getElementById('loginScreen');
+const loginScreen =
+    document.getElementById('loginScreen');
+
+
+/* =========================================================
+   SHOW / HIDE APP
+========================================================= */
 
 function showApp() {
-    loginScreen.classList.add('hidden');
+
+    loginScreen?.classList.add('hidden');
+
     load();
+
 }
+
 
 function showLogin() {
-    loginScreen.classList.remove('hidden');
+
+    loginScreen?.classList.remove('hidden');
+
 }
 
 
-/* =========================
+/* =========================================================
    PARTICLES
-========================= */
+========================================================= */
 
 function makeParticles() {
 
-    const box = document.getElementById('particles');
+    const box =
+        document.getElementById('particles');
 
     if (!box) return;
 
+
     for (let i = 0; i < 34; i++) {
 
-        const p = document.createElement('i');
+        const p =
+            document.createElement('i');
 
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDelay = (-Math.random() * 11) + 's';
-        p.style.animationDuration = (8 + Math.random() * 8) + 's';
-        p.style.opacity = (0.2 + Math.random() * 0.5);
+
+        p.style.left =
+            Math.random() * 100 + '%';
+
+
+        p.style.animationDelay =
+            (-Math.random() * 11) + 's';
+
+
+        p.style.animationDuration =
+            (8 + Math.random() * 8) + 's';
+
+
+        p.style.opacity =
+            0.2 + Math.random() * 0.5;
+
 
         box.appendChild(p);
+
     }
+
 }
 
 makeParticles();
 
 
-/* =========================
+/* =========================================================
    CURSOR GLOW
-========================= */
+========================================================= */
 
-window.addEventListener('mousemove', e => {
+window.addEventListener(
+    'mousemove',
+    e => {
 
-    const g = document.getElementById('cursorGlow');
-
-    if (g) {
-
-        g.style.left = e.clientX + 'px';
-        g.style.top = e.clientY + 'px';
-
-    }
-
-});
+        const glow =
+            document.getElementById(
+                'cursorGlow'
+            );
 
 
-/* =========================
-   LOADER
-========================= */
+        if (glow) {
 
-window.addEventListener('load', () => {
+            glow.style.left =
+                e.clientX + 'px';
 
-    setTimeout(() => {
+            glow.style.top =
+                e.clientY + 'px';
 
-        document.getElementById('loader')?.classList.add('hide');
-
-    }, 700);
-
-});
-
-
-/* =========================
-   LOGIN
-========================= */
-
-document.getElementById('loginForm')?.addEventListener('submit', async e => {
-
-    e.preventDefault();
-
-    const msg = document.getElementById('loginMsg');
-    const password = document.getElementById('adminPassword');
-
-    msg.textContent = 'Signing in…';
-
-    try {
-
-        const r = await fetch(API + '/admin/login', {
-
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-                password: password.value
-            })
-
-        });
-
-        const o = await r.json();
-
-        if (!r.ok) {
-            throw Error(o.error || 'Login failed');
         }
 
-        sessionStorage.setItem(
-            'chende_admin_key',
-            o.key
+    }
+);
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+window.addEventListener(
+    'load',
+    () => {
+
+        setTimeout(
+            () => {
+
+                document
+                    .getElementById('loader')
+                    ?.classList.add('hide');
+
+            },
+            700
         );
 
-        password.value = '';
-
-        msg.textContent = '';
-
-        showApp();
-
-    } catch (err) {
-
-        msg.textContent = err.message;
-
     }
+);
 
-});
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+document
+    .getElementById('loginForm')
+    ?.addEventListener(
+        'submit',
+        async e => {
+
+            e.preventDefault();
 
 
-/* =========================
+            const msg =
+                document.getElementById(
+                    'loginMsg'
+                );
+
+
+            const password =
+                document.getElementById(
+                    'adminPassword'
+                );
+
+
+            msg.textContent =
+                'Signing in…';
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API + '/admin/login',
+                        {
+
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    password:
+                                        password.value
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        'Login failed'
+                    );
+
+                }
+
+
+                sessionStorage.setItem(
+                    'chende_admin_key',
+                    data.key
+                );
+
+
+                password.value = '';
+
+                msg.textContent = '';
+
+                showApp();
+
+            } catch (error) {
+
+                msg.textContent =
+                    error.message;
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
    LOGOUT
-========================= */
+========================================================= */
 
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
+document
+    .getElementById('logoutBtn')
+    ?.addEventListener(
+        'click',
+        () => {
 
-    sessionStorage.removeItem('chende_admin_key');
+            sessionStorage.removeItem(
+                'chende_admin_key'
+            );
 
-    showLogin();
+            showLogin();
 
-});
+        }
+    );
 
 
-/* =========================
+/* =========================================================
    ESCAPE HTML
-========================= */
+========================================================= */
 
-function esc(v) {
+function esc(value) {
 
-    return String(v ?? '').replace(
+    return String(
+        value ?? ''
+    ).replace(
         /[&<>"']/g,
-        c => ({
+        character => ({
+
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
             "'": '&#039;'
-        }[c])
+
+        }[character])
     );
 
 }
 
 
-/* =========================
+/* =========================================================
    FORMAT DATE
-========================= */
+========================================================= */
 
 function formatDate(dateValue) {
 
     if (!dateValue) {
+
         return '';
+
     }
+
 
     try {
 
-        /*
-          Example input:
-          2026-09-18T00:00:00.000Z
-        */
+        const date =
+            new Date(dateValue);
 
-        const date = new Date(dateValue);
 
-        if (isNaN(date.getTime())) {
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
             return esc(dateValue);
+
         }
 
-        return date.toLocaleDateString('en-GB', {
 
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
+        return date.toLocaleDateString(
+            'en-GB',
+            {
 
-            timeZone: 'UTC'
+                day: '2-digit',
 
-        });
+                month: 'long',
+
+                year: 'numeric',
+
+                timeZone: 'UTC'
+
+            }
+        );
 
     } catch (error) {
 
@@ -203,101 +310,152 @@ function formatDate(dateValue) {
 }
 
 
-/* =========================
+/* =========================================================
    FORMAT TIME
-========================= */
+========================================================= */
 
 function formatTime(timeValue) {
 
     if (!timeValue) {
+
         return '';
+
     }
 
-    /*
-      If backend gives:
-      10:00:00
 
-      display:
-      10:00 AM
-    */
+    const parts =
+        String(timeValue)
+            .split(':');
 
-    const parts = String(timeValue).split(':');
 
     if (parts.length < 2) {
+
         return esc(timeValue);
+
     }
 
-    let hours = parseInt(parts[0], 10);
-    const minutes = parts[1];
 
-    if (isNaN(hours)) {
+    let hours =
+        parseInt(
+            parts[0],
+            10
+        );
+
+
+    const minutes =
+        parts[1];
+
+
+    if (Number.isNaN(hours)) {
+
         return esc(timeValue);
+
     }
 
-    const period = hours >= 12 ? 'PM' : 'AM';
 
-    hours = hours % 12;
+    const period =
+        hours >= 12
+            ? 'PM'
+            : 'AM';
+
+
+    hours =
+        hours % 12;
+
 
     if (hours === 0) {
+
         hours = 12;
+
     }
+
 
     return `${hours}:${minutes} ${period}`;
 
 }
 
 
-/* =========================
-   ACCEPT / REJECT
-========================= */
+/* =========================================================
+   ACCEPT / REJECT BOOKING
+========================================================= */
 
-async function setStatus(id, status) {
+async function setStatus(
+    id,
+    status
+) {
 
     const labels = {
 
         accepted: 'Accept',
+
         rejected: 'Reject'
 
     };
 
-    const action = labels[status];
+
+    const action =
+        labels[status];
+
 
     if (!action) {
+
         return;
+
     }
 
-    if (!confirm(`${action} booking #${id}?`)) {
+
+    const confirmed =
+        confirm(
+            `${action} booking #${id}?`
+        );
+
+
+    if (!confirmed) {
+
         return;
+
     }
+
 
     try {
 
-        const r = await fetch(
-            `${API}/bookings/${id}/status`,
-            {
+        const response =
+            await fetch(
+                `${API}/bookings/${id}/status`,
+                {
 
-                method: 'PATCH',
+                    method: 'PATCH',
 
-                headers: {
+                    headers: {
 
-                    'Content-Type': 'application/json',
+                        'Content-Type':
+                            'application/json',
 
-                    'X-Admin-Key': key()
+                        'X-Admin-Key':
+                            key()
 
-                },
+                    },
 
-                body: JSON.stringify({
+                    body:
+                        JSON.stringify({
+                            status
+                        })
 
-                    status: status
+                }
+            );
 
-                })
 
-            }
-        );
+        const data =
+            await response.json();
 
-        const o = await r.json();
 
-        if (r.status === 401) {
+        /* =========================
+           ADMIN SESSION EXPIRED
+        ========================= */
+
+        if (
+            response.status === 401
+        ) {
 
             sessionStorage.removeItem(
                 'chende_admin_key'
@@ -306,165 +464,291 @@ async function setStatus(id, status) {
             showLogin();
 
             return;
-        }
-
-        if (!r.ok) {
-
-            throw Error(
-                o.error || 'Could not update booking.'
-            );
 
         }
 
-        await load();
 
-    } catch (e) {
+        /* =========================
+           BACKEND ERROR
+        ========================= */
 
-        alert(e.message);
+        if (!response.ok) {
 
-    }
-
-}
-
-
-/* =========================
-   ACTION BUTTONS
-========================= */
-
-function actions(x) {
-
-    if (x.status === 'pending') {
-
-        return `
-
-            <button
-                class="action confirm"
-                onclick="setStatus(${x.id}, 'accepted')">
-                ✓ ACCEPT
-            </button>
-
-            <button
-                class="action cancel"
-                onclick="setStatus(${x.id}, 'rejected')">
-                ✕ REJECT
-            </button>
-
-        `;
-
-    }
-
-    if (x.status === 'accepted') {
-
-        return `
-
-            <span class="action-done">
-                ✓ ACCEPTED
-            </span>
-
-        `;
-
-    }
-
-    if (x.status === 'rejected') {
-
-        return `
-
-            <span class="action-done">
-                ✕ REJECTED
-            </span>
-
-        `;
-
-    }
-
-    return '';
-
-}
-
-
-/* =========================
-   LOAD BOOKINGS
-========================= */
-
-async function load() {
-
-    if (!key()) {
-
-        return showLogin();
-
-    }
-
-    try {
-
-        const r = await fetch(
-            API + '/bookings',
-            {
-
-                headers: {
-
-                    'X-Admin-Key': key()
-
-                }
-
-            }
-        );
-
-        const data = await r.json();
-
-        if (r.status === 401) {
-
-            sessionStorage.removeItem(
-                'chende_admin_key'
-            );
-
-            return showLogin();
-
-        }
-
-        if (!r.ok) {
-
-            throw Error(
-                data.error || 'Failed to load bookings'
+            throw new Error(
+                data.error ||
+                'Could not update booking.'
             );
 
         }
 
 
         /* =========================
-           STATISTICS
+           REFRESH DASHBOARD
         ========================= */
 
-        const total = data.length;
-
-        const pending = data.filter(
-            x => x.status === 'pending'
-        ).length;
-
-        const accepted = data.filter(
-            x => x.status === 'accepted'
-        ).length;
-
-        const rejected = data.filter(
-            x => x.status === 'rejected'
-        ).length;
+        await load();
 
 
-        document.getElementById(
-            'count'
-        ).textContent = total;
+    } catch (error) {
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
 
 
-        document.getElementById(
-            'pending'
-        ).textContent = pending;
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
 
+function actions(booking) {
+
+    /*
+       PENDING BOOKINGS:
+       ACCEPT + REJECT
+    */
+
+    if (
+        booking.status ===
+        'pending'
+    ) {
+
+        return `
+
+            <button
+                class="action confirm"
+                onclick="setStatus(${booking.id}, 'accepted')">
+
+                ✓ ACCEPT
+
+            </button>
+
+            <button
+                class="action cancel"
+                onclick="setStatus(${booking.id}, 'rejected')">
+
+                ✕ REJECT
+
+            </button>
+
+        `;
+
+    }
+
+
+    /*
+       ACCEPTED BOOKINGS:
+       NO MORE ACTIONS
+    */
+
+    if (
+        booking.status ===
+        'accepted'
+    ) {
+
+        return `
+
+            <span class="action-done">
+
+                ✓ ACCEPTED
+
+            </span>
+
+        `;
+
+    }
+
+
+    /*
+       REJECTED BOOKINGS:
+       NO MORE ACTIONS
+    */
+
+    if (
+        booking.status ===
+        'rejected'
+    ) {
+
+        return `
+
+            <span class="action-done">
+
+                ✕ REJECTED
+
+            </span>
+
+        `;
+
+    }
+
+
+    /*
+       Unknown/old database status.
+    */
+
+    return '';
+
+}
+
+
+/* =========================================================
+   LOAD BOOKINGS
+========================================================= */
+
+async function load() {
+
+    if (!key()) {
+
+        showLogin();
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                API + '/bookings',
+                {
+
+                    headers: {
+
+                        'X-Admin-Key':
+                            key()
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        /* =========================
+           SESSION EXPIRED
+        ========================= */
+
+        if (
+            response.status === 401
+        ) {
+
+            sessionStorage.removeItem(
+                'chende_admin_key'
+            );
+
+            showLogin();
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'Failed to load bookings'
+            );
+
+        }
+
+
+        /* =========================
+           SAFETY CHECK
+        ========================= */
+
+        if (!Array.isArray(data)) {
+
+            throw new Error(
+                'Invalid booking data received.'
+            );
+
+        }
+
+
+        /* =================================================
+           STATISTICS
+        ================================================= */
+
+        const total =
+            data.length;
+
+
+        const pending =
+            data.filter(
+                booking =>
+                    booking.status ===
+                    'pending'
+            ).length;
+
+
+        const accepted =
+            data.filter(
+                booking =>
+                    booking.status ===
+                    'accepted'
+            ).length;
+
+
+        const rejected =
+            data.filter(
+                booking =>
+                    booking.status ===
+                    'rejected'
+            ).length;
+
+
+        /* =========================
+           TOTAL
+        ========================= */
+
+        const countElement =
+            document.getElementById(
+                'count'
+            );
+
+
+        if (countElement) {
+
+            countElement.textContent =
+                total;
+
+        }
+
+
+        /* =========================
+           PENDING
+        ========================= */
+
+        const pendingElement =
+            document.getElementById(
+                'pending'
+            );
+
+
+        if (pendingElement) {
+
+            pendingElement.textContent =
+                pending;
+
+        }
+
+
+        /* =========================
+           ACCEPTED
+        ========================= */
 
         const acceptedElement =
-            document.getElementById('accepted');
-
-
-        const rejectedElement =
-            document.getElementById('rejected');
+            document.getElementById(
+                'accepted'
+            );
 
 
         if (acceptedElement) {
@@ -475,6 +759,16 @@ async function load() {
         }
 
 
+        /* =========================
+           REJECTED
+        ========================= */
+
+        const rejectedElement =
+            document.getElementById(
+                'rejected'
+            );
+
+
         if (rejectedElement) {
 
             rejectedElement.textContent =
@@ -483,102 +777,201 @@ async function load() {
         }
 
 
-        /* =========================
+        /* =================================================
            BOOKING TABLE
-        ========================= */
+        ================================================= */
 
         const rows =
-            document.getElementById('rows');
+            document.getElementById(
+                'rows'
+            );
 
 
-        rows.innerHTML = data.map(x => {
+        if (!rows) {
 
-            const displayDate =
-                formatDate(x.event_date);
+            return;
 
-
-            const displayTime =
-                formatTime(x.start_time);
+        }
 
 
-            return `
+        rows.innerHTML =
+            data
+                .map(
+                    booking => {
+
+                        const displayDate =
+                            formatDate(
+                                booking.event_date
+                            );
+
+
+                        const displayTime =
+                            formatTime(
+                                booking.start_time
+                            );
+
+
+                        return `
+
+                            <tr>
+
+                                <!-- BOOKING ID -->
+
+                                <td>
+
+                                    #${esc(
+                                        booking.id
+                                    )}
+
+                                </td>
+
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+
+                                    <strong>
+
+                                        ${esc(
+                                            booking.customer_name
+                                        )}
+
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+
+                                        ☎ ${esc(
+                                            booking.phone
+                                        )}
+
+                                    </small>
+
+                                    ${
+                                        booking.email
+
+                                        ? `
+
+                                            <br>
+
+                                            <small>
+
+                                                ✉ ${esc(
+                                                    booking.email
+                                                )}
+
+                                            </small>
+
+                                          `
+
+                                        : `
+
+                                            <br>
+
+                                            <small
+                                                class="muted">
+
+                                                Email not provided
+
+                                            </small>
+
+                                          `
+                                    }
+
+                                </td>
+
+
+                                <!-- EVENT -->
+
+                                <td>
+
+                                    ${esc(
+                                        booking.event_type
+                                    )}
+
+                                </td>
+
+
+                                <!-- DATE / TIME -->
+
+                                <td>
+
+                                    ${displayDate}
+
+                                    <br>
+
+                                    <small>
+
+                                        ${displayTime}
+
+                                    </small>
+
+                                </td>
+
+
+                                <!-- LOCATION -->
+
+                                <td>
+
+                                    ${esc(
+                                        booking.location
+                                    )}
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span
+                                        class="badge ${esc(
+                                            booking.status
+                                        )}">
+
+                                        ${esc(
+                                            booking.status
+                                        )}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td
+                                    class="actions">
+
+                                    ${actions(
+                                        booking
+                                    )}
+
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                    }
+                )
+                .join('');
+
+
+        /* =========================
+           EMPTY TABLE
+        ========================= */
+
+        if (!data.length) {
+
+            rows.innerHTML = `
 
                 <tr>
 
-                    <td>
-                        #${esc(x.id)}
-                    </td>
+                    <td colspan="7">
 
-
-                    <td>
-
-                        <strong>
-                            ${esc(x.customer_name)}
-                        </strong>
-
-                        <br>
-
-                        <small>
-                            ☎ ${esc(x.phone)}
-                        </small>
-
-                        ${
-                            x.email
-                            ? `
-                                <br>
-                                <small>
-                                    ✉ ${esc(x.email)}
-                                </small>
-                              `
-                            : `
-                                <br>
-                                <small class="muted">
-                                    Email not provided
-                                </small>
-                              `
-                        }
-
-                    </td>
-
-
-                    <td>
-                        ${esc(x.event_type)}
-                    </td>
-
-
-                    <td>
-
-                        ${displayDate}
-
-                        <br>
-
-                        <small>
-                            ${displayTime}
-                        </small>
-
-                    </td>
-
-
-                    <td>
-                        ${esc(x.location)}
-                    </td>
-
-
-                    <td>
-
-                        <span
-                            class="badge ${esc(x.status)}">
-
-                            ${esc(x.status)}
-
-                        </span>
-
-                    </td>
-
-
-                    <td class="actions">
-
-                        ${actions(x)}
+                        No bookings yet.
 
                     </td>
 
@@ -586,44 +979,50 @@ async function load() {
 
             `;
 
-        }).join('') || `
-
-            <tr>
-
-                <td colspan="7">
-                    No bookings yet.
-                </td>
-
-            </tr>
-
-        `;
+        }
 
 
-    } catch (e) {
+    } catch (error) {
 
-        document.getElementById(
-            'rows'
-        ).innerHTML = `
+        console.error(
+            'Load bookings error:',
+            error
+        );
 
-            <tr>
 
-                <td colspan="7">
-                    Unable to load bookings.
-                    Check that the backend is running.
-                </td>
+        const rows =
+            document.getElementById(
+                'rows'
+            );
 
-            </tr>
 
-        `;
+        if (rows) {
+
+            rows.innerHTML = `
+
+                <tr>
+
+                    <td colspan="7">
+
+                        Unable to load bookings.
+                        Check that the backend is running.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
 
     }
 
 }
 
 
-/* =========================
+/* =========================================================
    START
-========================= */
+========================================================= */
 
 if (key()) {
 
@@ -636,21 +1035,20 @@ if (key()) {
 }
 
 
-/* =========================
+/* =========================================================
    AUTO REFRESH
-========================= */
+   Every 15 seconds
+========================================================= */
 
-setInterval(() => {
+setInterval(
+    () => {
 
-    if (
-        key() &&
-        !loginScreen.classList.contains('hidden')
-    ) {
-        return;
-    }
+        if (key()) {
 
-    if (key()) {
-        load();
-    }
+            load();
 
-}, 15000);
+        }
+
+    },
+    15000
+);

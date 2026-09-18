@@ -1,296 +1,312 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>
-    Book Chende | Shri Mahaganapathi Chende Balaga
-  </title>
+  <title>Book Chende - Shri Mahaganapathi Chende Balaga</title>
 
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-  <main class="booking standalone-booking">
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-content">
+      <img src="assets/logo.jpg" alt="Shri Mahaganapathi Chende Balaga">
+      <p>Loading...</p>
+    </div>
+  </div>
 
-    <div class="booking-grid">
+  <!-- Header -->
+  <header class="header">
 
-      <!-- LEFT SIDE -->
-      <div>
+    <div class="container nav-container">
 
-        <p class="eyebrow">
-          SHRI MAHAGANAPATHI CHENDE BALAGA
-        </p>
+      <a href="index.html" class="logo">
+        Shri Mahaganapathi Chende Balaga
+      </a>
 
-        <h1>
-          Book <span>Chende</span>
-        </h1>
+      <button class="menu-toggle" id="menuToggle">
+        ☰
+      </button>
 
-        <p class="muted">
-          Send your event details. Our team will review
-          your request and contact you to confirm the booking.
-        </p>
+      <nav class="nav" id="navMenu">
 
-        <a class="text-link" href="index.html">
-          ← Back to website
-        </a>
+        <a href="index.html">Home</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#team">Team</a>
+        <a href="index.html#gallery">Gallery</a>
+        <a href="booking.html" class="active">Book Now</a>
 
-        <br>
+      </nav>
 
-        <a class="text-link" href="status.html">
-          Check an existing booking →
-        </a>
+      <button id="themeToggle" class="theme-toggle">
+        ◐
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- Booking Section -->
+  <main>
+
+    <section class="booking-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <span class="section-tag">
+            BOOKING
+          </span>
+
+          <h1>
+            Book Chende Seva
+          </h1>
+
+          <p>
+            Fill in your event details and submit your booking request.
+          </p>
+
+        </div>
+
+
+        <div class="booking-card">
+
+          <form id="bookingForm" class="form">
+
+
+            <!-- Full Name -->
+            <label>
+              Full Name
+
+              <input
+                type="text"
+                name="customer_name"
+                required
+                autocomplete="name"
+                placeholder="Enter your full name"
+              >
+
+            </label>
+
+
+            <!-- Phone -->
+            <label>
+              Phone
+
+              <input
+                type="tel"
+                name="phone"
+                required
+                autocomplete="tel"
+                placeholder="Enter your phone number"
+              >
+
+            </label>
+
+
+            <!-- Email -->
+            <label>
+              Email
+              <span class="optional">
+                (Optional)
+              </span>
+
+              <input
+                type="email"
+                name="email"
+                autocomplete="email"
+                placeholder="Enter your email address"
+              >
+
+            </label>
+
+
+            <!-- Event Type -->
+            <label>
+              Event Type
+
+              <select name="event_type" required>
+
+                <option value="">
+                  Select
+                </option>
+
+                <option value="Wedding">
+                  Wedding
+                </option>
+
+                <option value="Bhajan">
+                  Bhajan
+                </option>
+
+                <option value="Procession">
+                  Procession
+                </option>
+
+                <option value="Temple Event">
+                  Temple Event
+                </option>
+
+                <option value="Cultural Program">
+                  Cultural Program
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <!-- Event Date -->
+            <label>
+              Event Date
+
+              <input
+                type="date"
+                name="event_date"
+                id="eventDate"
+                required
+              >
+
+            </label>
+
+
+            <!-- Start Time -->
+            <label>
+              Start Time
+
+              <input
+                type="time"
+                name="start_time"
+                required
+              >
+
+            </label>
+
+
+            <!-- Location -->
+            <label>
+
+              Venue / Location
+
+              <div class="location-control">
+
+                <input
+                  type="text"
+                  name="location"
+                  id="location"
+                  required
+                  readonly
+                  placeholder="Click the button to detect your location"
+                >
+
+                <button
+                  type="button"
+                  id="detectLocationBtn"
+                  class="location-button"
+                >
+                  📍 Detect My Location
+                </button>
+
+              </div>
+
+              <small
+                id="locationStatus"
+                class="muted"
+              >
+                Click "Detect My Location" and allow location access.
+              </small>
+
+            </label>
+
+
+            <!-- Hidden Google Maps Link -->
+            <input
+              type="hidden"
+              name="google_maps_link"
+              id="googleMapsLink"
+            >
+
+
+            <!-- Open Map -->
+            <div
+              id="locationMapBox"
+              class="location-map-box"
+              style="display:none;"
+            >
+
+              <div class="location-success">
+                ✓ Location detected successfully
+              </div>
+
+              <a
+                id="openMapLink"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-link"
+              >
+                Open detected location in Google Maps ↗
+              </a>
+
+            </div>
+
+
+            <!-- Additional Requirements -->
+            <label>
+
+              Additional Requirements
+
+              <textarea
+                name="message"
+                rows="5"
+                placeholder="Any additional information..."
+              ></textarea>
+
+            </label>
+
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="submit-button"
+            >
+              Submit Booking Request ↗
+            </button>
+
+
+            <!-- Message -->
+            <div
+              id="bookingMsg"
+              class="booking-message"
+            ></div>
+
+
+            <!-- Service Status -->
+            <div
+              id="bookingServiceStatus"
+              class="service-status"
+            >
+              Checking booking service...
+            </div>
+
+          </form>
+
+        </div>
 
       </div>
 
-
-      <!-- BOOKING FORM -->
-      <form id="bookingForm" class="form">
-
-        <!-- NAME + PHONE -->
-        <div class="two">
-
-          <label>
-            Full Name
-
-            <input
-              name="customer_name"
-              required
-              placeholder="Your name"
-            >
-
-          </label>
-
-
-          <label>
-            Phone
-
-            <input
-              name="phone"
-              type="tel"
-              required
-              placeholder="Mobile number"
-            >
-
-          </label>
-
-        </div>
-
-
-        <!-- EMAIL + EVENT TYPE -->
-        <div class="two">
-
-          <label>
-            Email
-            <span class="optional">
-              (Optional)
-            </span>
-
-            <input
-              name="email"
-              type="email"
-              placeholder="your@email.com"
-            >
-
-          </label>
-
-
-          <label>
-            Event Type
-
-            <select
-              name="event_type"
-              required
-            >
-
-              <option value="">
-                Select
-              </option>
-
-              <option>
-                Wedding
-              </option>
-
-              <option>
-                Bhajan
-              </option>
-
-              <option>
-                Procession
-              </option>
-
-              <option>
-                Temple Event
-              </option>
-
-              <option>
-                Cultural Program
-              </option>
-
-              <option>
-                Other
-              </option>
-
-            </select>
-
-          </label>
-
-        </div>
-
-
-        <!-- DATE + TIME -->
-        <div class="two">
-
-          <label>
-            Event Date
-
-            <input
-              name="event_date"
-              type="date"
-              required
-            >
-
-          </label>
-
-
-          <label>
-            Start Time
-
-            <input
-              name="start_time"
-              type="time"
-              required
-            >
-
-          </label>
-
-        </div>
-
-
-        <!-- VENUE NAME -->
-        <label>
-
-          Venue / Location
-
-          <input
-            name="location"
-            required
-            placeholder="Enter venue name and town"
-          >
-
-        </label>
-
-
-        <!-- GOOGLE MAPS -->
-        <label>
-
-          Google Maps Location
-          <span class="optional">
-            (Required)
-          </span>
-
-          <div
-            style="
-              display:flex;
-              gap:10px;
-              align-items:stretch;
-              flex-wrap:wrap;
-            "
-          >
-
-            <input
-              id="googleMapsLink"
-              name="google_maps_link"
-              type="url"
-              required
-              placeholder="Paste Google Maps link here"
-              style="flex:1;min-width:220px;"
-            >
-
-            <a
-              href="https://www.google.com/maps"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-link"
-              style="
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding:0 14px;
-                border:1px solid currentColor;
-                border-radius:8px;
-                white-space:nowrap;
-              "
-            >
-              Select on Google Maps ↗
-            </a>
-
-          </div>
-
-          <small
-            class="muted"
-            style="display:block;margin-top:7px;"
-          >
-            Enter the venue name above, click
-            <strong>Select on Google Maps</strong>,
-            find the venue, copy the Google Maps link,
-            then paste it here.
-          </small>
-
-        </label>
-
-
-        <!-- MESSAGE -->
-        <label>
-
-          Additional Requirements
-
-          <textarea
-            name="message"
-            rows="4"
-            placeholder="Tell us about your event..."
-          ></textarea>
-
-        </label>
-
-
-        <!-- SUBMIT -->
-        <button
-          class="gold"
-          type="submit"
-          id="bookingSubmit"
-        >
-          Submit Booking Request ↗
-        </button>
-
-
-        <!-- MESSAGE -->
-        <p
-          id="bookingMsg"
-          role="status"
-        ></p>
-
-
-        <!-- SERVICE STATUS -->
-        <div
-          id="bookingServiceStatus"
-          class="booking-service-status"
-        >
-
-          <span class="dot"></span>
-
-          <span>
-            Checking booking service…
-          </span>
-
-        </div>
-
-      </form>
-
-    </div>
+    </section>
 
   </main>
 
@@ -298,5 +314,4 @@
   <script src="js/main.js"></script>
 
 </body>
-
 </html>

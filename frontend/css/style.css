@@ -106,17 +106,19 @@ textarea {
   inset: 0;
   background: #080706;
   color: #e4b15f;
-  z-index: 100;
+  z-index: 9999;
   display: grid;
   place-content: center;
   justify-items: center;
   gap: 10px;
-  transition: 0.7s;
+  transition: opacity 0.7s, visibility 0.7s;
 }
 
-#loader.hide {
+#loader.hide,
+#loader.hidden {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 }
 
 .loader-aura {
@@ -174,7 +176,7 @@ textarea {
 }
 
 #loader b {
-  font: 800 12px Cinzel;
+  font: 800 12px Cinzel, serif;
   letter-spacing: 2px;
   text-align: center;
 }
@@ -220,12 +222,12 @@ header {
 .brand span {
   display: flex;
   flex-direction: column;
-  font: 800 11px Cinzel;
+  font: 800 11px Cinzel, serif;
   letter-spacing: 1px;
 }
 
 .brand small {
-  font: 700 8px Inter;
+  font: 700 8px Inter, Arial, sans-serif;
   letter-spacing: 3px;
   color: #a76c2c;
   margin-top: 2px;
@@ -384,7 +386,7 @@ nav > a:not(.book):hover::after {
 }
 
 .hero h1 {
-  font: 800 clamp(56px, 7vw, 102px) / 0.94 Cinzel;
+  font: 800 clamp(56px, 7vw, 102px) / 0.94 Cinzel, serif;
   letter-spacing: -3px;
   margin: 18px 0 25px;
   text-shadow: 0 10px 50px #000;
@@ -436,7 +438,7 @@ nav > a:not(.book):hover::after {
 
 .stats b {
   display: block;
-  font: 700 29px Cinzel;
+  font: 700 29px Cinzel, serif;
   color: #e5b465;
 }
 
@@ -595,7 +597,7 @@ nav > a:not(.book):hover::after {
 .section h2,
 .booking h2,
 .contact h2 {
-  font: 700 clamp(40px, 5vw, 68px) / 1.05 Cinzel;
+  font: 700 clamp(40px, 5vw, 68px) / 1.05 Cinzel, serif;
   letter-spacing: -2px;
   margin: 12px 0 24px;
 }
@@ -696,12 +698,12 @@ nav > a:not(.book):hover::after {
 }
 
 .om {
-  font: 100px Georgia;
+  font: 100px Georgia, serif;
   text-shadow: 0 0 30px #d7973d99;
 }
 
 .about-card h3 {
-  font: 700 19px Cinzel;
+  font: 700 19px Cinzel, serif;
   position: absolute;
   bottom: 78px;
 }
@@ -792,7 +794,7 @@ nav > a:not(.book):hover::after {
 }
 
 .service-grid h3 {
-  font: 700 21px Cinzel;
+  font: 700 21px Cinzel, serif;
 }
 
 .service-grid p {
@@ -873,7 +875,7 @@ nav > a:not(.book):hover::after {
 }
 
 .team-copy h2 {
-  font: 700 clamp(48px, 7vw, 90px) / 0.92 Cinzel;
+  font: 700 clamp(48px, 7vw, 90px) / 0.92 Cinzel, serif;
   margin: 15px 0 25px;
 }
 
@@ -902,7 +904,7 @@ nav > a:not(.book):hover::after {
 }
 
 .team-caption b {
-  font: 700 19px Cinzel;
+  font: 700 19px Cinzel, serif;
   color: #e2af61;
 }
 
@@ -1026,9 +1028,8 @@ nav > a:not(.book):hover::after {
   max-width: 480px;
 }
 
-/* Standalone booking page heading */
 .standalone-booking h1 {
-  font: 700 clamp(45px, 5vw, 70px) / 1.05 Cinzel;
+  font: 700 clamp(45px, 5vw, 70px) / 1.05 Cinzel, serif;
   letter-spacing: -2px;
   margin: 12px 0 24px;
   color: #fff;
@@ -1202,7 +1203,7 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   VENUE / GOOGLE MAPS
+   LOCATION / GOOGLE MAPS
 ========================= */
 
 .form label input[name="location"] {
@@ -1211,6 +1212,53 @@ nav > a:not(.book):hover::after {
 
 .form label input[name="google_maps_link"] {
   min-height: 50px;
+}
+
+.location-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+#detectLocationBtn {
+  border: 1px solid #a86d2c;
+  background: #fff8ed;
+  color: #8c581e;
+  border-radius: 9px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: 0.25s;
+}
+
+#detectLocationBtn:hover {
+  background: #a86d2c;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+#detectLocationBtn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+.location-status {
+  display: block;
+  margin-top: 8px;
+  color: #756a5d;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.location-status.success {
+  color: #397047;
+}
+
+.location-map-box {
+  display: none;
+  margin-top: 10px;
 }
 
 .maps-input-row {
@@ -1409,13 +1457,13 @@ nav > a:not(.book):hover::after {
 }
 
 .quote > b {
-  font: 90px Georgia;
+  font: 90px Georgia, serif;
   color: #ffe0a4;
   line-height: 0.5;
 }
 
 .quote p {
-  font: italic 600 clamp(27px, 4vw, 48px) "Playfair Display";
+  font: italic 600 clamp(27px, 4vw, 48px) "Playfair Display", serif;
 }
 
 .quote small {
@@ -1464,7 +1512,7 @@ nav > a:not(.book):hover::after {
 }
 
 .details b {
-  font: 600 15px Cinzel;
+  font: 600 15px Cinzel, serif;
 }
 
 .details a:hover b {
@@ -1500,7 +1548,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  font: 700 9px Cinzel;
+  font: 700 9px Cinzel, serif;
   color: #e0b26a;
 }
 
@@ -1512,7 +1560,7 @@ footer {
 }
 
 .footer-brand small {
-  font: 700 7px Inter;
+  font: 700 7px Inter, Arial, sans-serif;
   letter-spacing: 3px;
 }
 
@@ -1648,13 +1696,15 @@ footer {
   color: #b9a998;
 }
 
-.dark .maps-input-row .text-link {
+.dark .maps-input-row .text-link,
+.dark #detectLocationBtn {
   background: #241b14;
   color: #e2ad5d;
   border-color: #765733;
 }
 
-.dark .maps-input-row .text-link:hover {
+.dark .maps-input-row .text-link:hover,
+.dark #detectLocationBtn:hover {
   color: #fff;
   background: #a86d2c;
 }
@@ -1739,7 +1789,8 @@ footer {
     background: #11100ef5;
   }
 
-  nav.open {
+  nav.open,
+  nav.active {
     display: flex;
   }
 
@@ -1859,6 +1910,15 @@ footer {
   }
 
   .maps-input-row .text-link {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .location-controls {
+    flex-direction: column;
+  }
+
+  #detectLocationBtn {
     width: 100%;
     min-height: 46px;
   }

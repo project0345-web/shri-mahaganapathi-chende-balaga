@@ -39,13 +39,11 @@ const brevoSenderName =
   process.env.BREVO_SENDER_NAME ||
   'Shri Mahaganapathi Chende Balaga';
 
-
 const adminEmails =
   (process.env.ADMIN_EMAILS || '')
     .split(',')
     .map(v => v.trim())
     .filter(Boolean);
-
 
 const emailReady =
   Boolean(
@@ -115,7 +113,6 @@ function normalizePhone(phone) {
   const raw =
     String(phone || '').trim();
 
-
   if (raw.startsWith('+')) {
 
     return raw.replace(
@@ -125,17 +122,14 @@ function normalizePhone(phone) {
 
   }
 
-
   const digits =
     raw.replace(/\D/g, '');
-
 
   if (digits.length === 10) {
 
     return `+91${digits}`;
 
   }
-
 
   if (
     digits.startsWith('91') &&
@@ -146,18 +140,36 @@ function normalizePhone(phone) {
 
   }
 
-
   return `+${digits}`;
 
 }
 
 
 /* =========================================================
+   GOOGLE MAPS LINK VALIDATION
+========================================================= */
+
+function isValidGoogleMapsLink(link) {
+
+  const value =
+    String(link || '').trim();
+
+  if (!value) {
+    return false;
+  }
+
+  return (
+    value.includes('google.com/maps') ||
+    value.includes('maps.google.com') ||
+    value.includes('maps.app.goo.gl') ||
+    value.includes('goo.gl/maps')
+  );
+
+}
+
+
+/* =========================================================
    DATE FORMAT
-   Example:
-   2026-09-18
-   →
-   18 September 2026
 ========================================================= */
 
 function formatDate(date) {
@@ -166,18 +178,15 @@ function formatDate(date) {
     return 'Not provided';
   }
 
-
   const value =
     String(date)
       .trim()
       .slice(0, 10);
 
-
   const match =
     value.match(
       /^(\d{4})-(\d{2})-(\d{2})$/
     );
-
 
   if (!match) {
 
@@ -190,7 +199,6 @@ function formatDate(date) {
 
   }
 
-
   const year =
     match[1];
 
@@ -199,7 +207,6 @@ function formatDate(date) {
 
   const day =
     Number(match[3]);
-
 
   const months = [
 
@@ -218,7 +225,6 @@ function formatDate(date) {
 
   ];
 
-
   if (
     month < 1 ||
     month > 12
@@ -228,7 +234,6 @@ function formatDate(date) {
 
   }
 
-
   return `${day} ${months[month - 1]} ${year}`;
 
 }
@@ -236,10 +241,6 @@ function formatDate(date) {
 
 /* =========================================================
    TIME FORMAT
-   Example:
-   10:00:00
-   →
-   10:00 AM
 ========================================================= */
 
 function formatTime(time) {
@@ -248,13 +249,11 @@ function formatTime(time) {
     return '';
   }
 
-
   const [h, m] =
     String(time)
       .slice(0, 5)
       .split(':')
       .map(Number);
-
 
   if (
     Number.isNaN(h) ||
@@ -265,19 +264,15 @@ function formatTime(time) {
 
   }
 
-
   const period =
     h >= 12 ? 'PM' : 'AM';
-
 
   let hour =
     h % 12;
 
-
   if (hour === 0) {
     hour = 12;
   }
-
 
   return `${hour}:${String(m).padStart(2, '0')} ${period}`;
 
@@ -304,7 +299,6 @@ async function sendBrevoEmail({
 
   }
 
-
   const recipients =
     Array.isArray(to)
 
@@ -320,7 +314,6 @@ async function sendBrevoEmail({
           }
         ];
 
-
   if (!recipients.length) {
 
     return {
@@ -329,7 +322,6 @@ async function sendBrevoEmail({
     };
 
   }
-
 
   const data =
     JSON.stringify({
@@ -351,7 +343,6 @@ async function sendBrevoEmail({
           .replace(/\n/g, '<br>')}</p>`
 
     });
-
 
   return new Promise(resolve => {
 
@@ -390,14 +381,12 @@ async function sendBrevoEmail({
 
           let body = '';
 
-
           response.on(
             'data',
             chunk => {
               body += chunk;
             }
           );
-
 
           response.on(
             'end',
@@ -411,7 +400,6 @@ async function sendBrevoEmail({
                 console.log(
                   'Brevo email sent successfully.'
                 );
-
 
                 resolve({
 
@@ -428,7 +416,6 @@ async function sendBrevoEmail({
                   response.statusCode,
                   body
                 );
-
 
                 resolve({
 
@@ -448,7 +435,6 @@ async function sendBrevoEmail({
 
       );
 
-
     request.on(
       'error',
       error => {
@@ -457,7 +443,6 @@ async function sendBrevoEmail({
           'Brevo request error:',
           error.message
         );
-
 
         resolve({
 
@@ -470,7 +455,6 @@ async function sendBrevoEmail({
       }
     );
 
-
     request.write(data);
 
     request.end();
@@ -482,10 +466,6 @@ async function sendBrevoEmail({
 
 /* =========================================================
    CUSTOMER EMAIL NOTIFICATION
-   STATUS:
-   pending
-   accepted
-   rejected
 ========================================================= */
 
 async function notifyCustomer(
@@ -501,7 +481,6 @@ async function notifyCustomer(
 
   };
 
-
   const allowedStatuses = [
 
     'pending',
@@ -510,7 +489,6 @@ async function notifyCustomer(
 
   ];
 
-
   if (
     !allowedStatuses.includes(status)
   ) {
@@ -518,7 +496,6 @@ async function notifyCustomer(
     return result;
 
   }
-
 
   if (!booking.email) {
 
@@ -537,9 +514,7 @@ async function notifyCustomer(
 
   }
 
-
   let subject;
-
 
   if (status === 'accepted') {
 
@@ -560,10 +535,8 @@ async function notifyCustomer(
 
   }
 
-
   const statusText =
     status.toUpperCase();
-
 
   const text =
 `Dear ${booking.customer_name},
@@ -573,8 +546,12 @@ Your Chende booking request #${booking.id} has been ${status}.
 Event: ${booking.event_type}
 Date: ${formatDate(booking.event_date)}
 Time: ${formatTime(booking.start_time)}
-Location: ${booking.location}
+Venue: ${booking.location}
+Google Maps: ${booking.google_maps_link}
 Status: ${statusText}
+
+Open Google Maps:
+${booking.google_maps_link}
 
 You can check your booking status using your Booking ID and phone number.
 
@@ -618,8 +595,19 @@ Phone: 8971474693 / 8277069598 / 9844667599`;
   </p>
 
   <p>
-    <strong>Location:</strong>
+    <strong>Venue:</strong>
     ${booking.location}
+  </p>
+
+  <p>
+    <strong>Google Maps:</strong>
+    <a
+      href="${booking.google_maps_link}"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Open Venue Location
+    </a>
   </p>
 
   <p>
@@ -673,7 +661,6 @@ Phone: 8971474693 / 8277069598 / 9844667599`;
       e.message
     );
 
-
     result.email = {
 
       sent: false,
@@ -683,7 +670,6 @@ Phone: 8971474693 / 8277069598 / 9844667599`;
     };
 
   }
-
 
   return result;
 
@@ -706,7 +692,6 @@ async function notifyAdminNewBooking(
 
   };
 
-
   if (!adminEmails.length) {
 
     return {
@@ -724,10 +709,8 @@ async function notifyAdminNewBooking(
 
   }
 
-
   const subject =
     `New Chende Booking Request #${booking.id}`;
-
 
   const text =
 `New Chende booking request #${booking.id} has been received.
@@ -738,9 +721,13 @@ Email: ${booking.email || 'Not provided'}
 Event: ${booking.event_type}
 Date: ${formatDate(booking.event_date)}
 Time: ${formatTime(booking.start_time)}
-Location: ${booking.location}
+Venue: ${booking.location}
+Google Maps: ${booking.google_maps_link}
 Message: ${booking.message || 'None'}
 Status: PENDING
+
+Open Google Maps:
+${booking.google_maps_link}
 
 Please login to the Chende admin dashboard to review and accept or reject the booking.
 
@@ -794,8 +781,19 @@ Mudradi, Karnataka`;
   </p>
 
   <p>
-    <strong>Location:</strong>
+    <strong>Venue:</strong>
     ${booking.location}
+  </p>
+
+  <p>
+    <strong>Google Maps:</strong>
+    <a
+      href="${booking.google_maps_link}"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Open Venue Location
+    </a>
   </p>
 
   <p>
@@ -831,7 +829,6 @@ Mudradi, Karnataka`;
 
   let sent = 0;
 
-
   if (!emailReady) {
 
     return {
@@ -848,7 +845,6 @@ Mudradi, Karnataka`;
     };
 
   }
-
 
   for (
     const email of adminEmails
@@ -868,7 +864,6 @@ Mudradi, Karnataka`;
           html
 
         });
-
 
       if (response.sent) {
 
@@ -895,7 +890,6 @@ Mudradi, Karnataka`;
         e.message
       );
 
-
       failures.push({
 
         email,
@@ -908,7 +902,6 @@ Mudradi, Karnataka`;
 
   }
 
-
   result.email = {
 
     sent: sent > 0,
@@ -920,7 +913,6 @@ Mudradi, Karnataka`;
     failures
 
   };
-
 
   return result;
 
@@ -940,7 +932,6 @@ app.get(
       await db.query(
         'SELECT 1'
       );
-
 
       res.json({
 
@@ -968,7 +959,6 @@ app.get(
         'Database connection error:',
         e
       );
-
 
       res.status(503).json({
 
@@ -1013,6 +1003,8 @@ app.post(
 
       location,
 
+      google_maps_link,
+
       message
 
     } = req.body;
@@ -1030,7 +1022,9 @@ app.post(
 
       !start_time ||
 
-      !location
+      !location ||
+
+      !google_maps_link
 
     ) {
 
@@ -1038,6 +1032,22 @@ app.post(
 
         error:
           'Please fill all required fields.'
+
+      });
+
+    }
+
+
+    if (
+      !isValidGoogleMapsLink(
+        google_maps_link
+      )
+    ) {
+
+      return res.status(400).json({
+
+        error:
+          'Please enter a valid Google Maps link.'
 
       });
 
@@ -1062,11 +1072,13 @@ app.post(
             event_date,
             start_time,
             location,
+            google_maps_link,
             message,
             status
           )
           VALUES
           (
+            ?,
             ?,
             ?,
             ?,
@@ -1093,6 +1105,8 @@ app.post(
             start_time,
 
             location,
+
+            google_maps_link,
 
             message || null
 
@@ -1185,7 +1199,6 @@ app.post(
     const id =
       Number(req.body?.id);
 
-
     const phone =
       String(
         req.body?.phone || ''
@@ -1216,6 +1229,7 @@ app.post(
             event_date,
             start_time,
             location,
+            google_maps_link,
             status,
             created_at
           FROM bookings
@@ -1359,14 +1373,6 @@ app.patch(
       Number(req.params.id);
 
 
-    /*
-      ONLY THREE STATUSES ARE ALLOWED:
-
-      pending
-      accepted
-      rejected
-    */
-
     const allowed = [
 
       'pending',
@@ -1400,7 +1406,7 @@ app.patch(
     try {
 
       /*
-        Get the current booking first.
+        Get current booking.
       */
 
       const [existingRows] =
@@ -1430,11 +1436,8 @@ app.patch(
 
 
       /*
-        Prevent changing an already
-        accepted/rejected booking again.
-
-        Only PENDING bookings can be
-        accepted or rejected.
+        Only pending bookings can
+        be accepted or rejected.
       */
 
       if (

@@ -1,101 +1,56 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const cors = require('cors');
-const mysql = require('mysql2/promise');
-const https = require('https');
+const express = require("express");
+const cors = require("cors");
+const mysql = require("mysql2/promise");
 
 const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
-
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || 'change-this-admin-password';
-
-const ADMIN_KEY =
-  process.env.ADMIN_KEY || 'change-this-admin-key';
 
 const PORT =
   process.env.PORT || 5000;
 
 
-/* =========================================================
-   BREVO EMAIL CONFIGURATION
-========================================================= */
+/* =========================
+   MIDDLEWARE
+========================= */
 
-const brevoApiKey =
-  process.env.BREVO_API_KEY || '';
+app.use(
+  cors({
+    origin: "*"
+  })
+);
 
-const brevoSenderEmail =
-  process.env.BREVO_SENDER_EMAIL || '';
-
-const brevoSenderName =
-  process.env.BREVO_SENDER_NAME ||
-  'Shri Mahaganapathi Chende Balaga';
-
-const adminEmails =
-  (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map(v => v.trim())
-    .filter(Boolean);
-
-const emailReady =
-  Boolean(
-    brevoApiKey &&
-    brevoSenderEmail
-  );
+app.use(
+  express.json()
+);
 
 
-/* =========================================================
-   ADMIN AUTHENTICATION
-========================================================= */
+/* =========================
+   DATABASE
+========================= */
 
-function requireAdmin(req, res, next) {
-
-  if (
-    req.headers['x-admin-key'] !==
-    ADMIN_KEY
-  ) {
-
-    return res.status(401).json({
-      error: 'Admin authentication required.'
-    });
-
-  }
-
-  next();
-
-}
-
-
-/* =========================================================
-   MYSQL DATABASE
-========================================================= */
-
-const db = mysql.createPool({
+const pool = mysql.createPool({
 
   host: process.env.DB_HOST,
 
   port:
-    Number(
-      process.env.DB_PORT || 3306
-    ),
+    process.env.DB_PORT
+      ? Number(process.env.DB_PORT)
+      : 3306,
 
   user: process.env.DB_USER,
 
-  password: process.env.DB_PASSWORD,
+  password:
+    process.env.DB_PASSWORD,
 
-  database: process.env.DB_NAME,
+  database:
+    process.env.DB_NAME,
 
   waitForConnections: true,
 
   connectionLimit: 10,
+
+  queueLimit: 0,
 
   ssl: {
     rejectUnauthorized: false
@@ -104,873 +59,119 @@ const db = mysql.createPool({
 });
 
 
-/* =========================================================
-   PHONE NORMALIZATION
-========================================================= */
+/* =========================
+   HELPERS
+========================= */
 
-function normalizePhone(phone) {
+function formatDate(date) {
 
-  const raw =
-    String(phone || '').trim();
-
-  if (raw.startsWith('+')) {
-
-    return raw.replace(
-      /[^+\d]/g,
-      ''
-    );
-
+  if (!date) {
+    return "";
   }
 
-  const digits =
-    raw.replace(/\D/g, '');
+  const d =
+    new Date(date);
 
-  if (digits.length === 10) {
-
-    return `+91${digits}`;
-
-  }
-
-  if (
-    digits.startsWith('91') &&
-    digits.length === 12
-  ) {
-
-    return `+${digits}`;
-
-  }
-
-  return `+${digits}`;
-
-}
-
-
-/* =========================================================
-   GOOGLE MAPS LINK VALIDATION
-========================================================= */
-
-function isValidGoogleMapsLink(link) {
-
-  const value =
-    String(link || '').trim();
-
-  if (!value) {
-    return false;
-  }
-
-  return (
-    value.includes('google.com/maps') ||
-    value.includes('maps.google.com') ||
-    value.includes('maps.app.goo.gl') ||
-    value.includes('goo.gl/maps')
+  return d.toLocaleDateString(
+    "en-IN",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }
   );
 
 }
 
 
-/* =========================================================
-   DATE FORMAT
-========================================================= */
-
-function formatDate(date) {
-
-  if (!date) {
-    return 'Not provided';
-  }
-
-  const value =
-    String(date)
-      .trim()
-      .slice(0, 10);
-
-  const match =
-    value.match(
-      /^(\d{4})-(\d{2})-(\d{2})$/
-    );
-
-  if (!match) {
-
-    console.log(
-      'Unexpected event_date value:',
-      date
-    );
-
-    return value || 'Not provided';
-
-  }
-
-  const year =
-    match[1];
-
-  const month =
-    Number(match[2]);
-
-  const day =
-    Number(match[3]);
-
-  const months = [
-
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-
-  ];
-
-  if (
-    month < 1 ||
-    month > 12
-  ) {
-
-    return value;
-
-  }
-
-  return `${day} ${months[month - 1]} ${year}`;
-
-}
-
-
-/* =========================================================
-   TIME FORMAT
-========================================================= */
-
 function formatTime(time) {
 
   if (!time) {
-    return '';
+    return "";
   }
 
-  const [h, m] =
-    String(time)
-      .slice(0, 5)
-      .split(':')
-      .map(Number);
-
-  if (
-    Number.isNaN(h) ||
-    Number.isNaN(m)
-  ) {
-
-    return String(time);
-
-  }
-
-  const period =
-    h >= 12 ? 'PM' : 'AM';
+  const parts =
+    String(time).split(":");
 
   let hour =
-    h % 12;
+    Number(parts[0]);
 
-  if (hour === 0) {
-    hour = 12;
-  }
+  const minute =
+    parts[1] || "00";
 
-  return `${hour}:${String(m).padStart(2, '0')} ${period}`;
+  const period =
+    hour >= 12
+      ? "PM"
+      : "AM";
+
+  hour =
+    hour % 12 || 12;
+
+  return `${hour}:${minute} ${period}`;
 
 }
 
 
-/* =========================================================
-   BREVO EMAIL
-========================================================= */
+function isGoogleMapsLink(value) {
 
-async function sendBrevoEmail({
-  to,
-  subject,
-  text,
-  html
-}) {
-
-  if (!emailReady) {
-
-    return {
-      sent: false,
-      reason: 'email-not-configured'
-    };
-
+  if (!value) {
+    return false;
   }
-
-  const recipients =
-    Array.isArray(to)
-
-      ? to
-          .filter(Boolean)
-          .map(email => ({
-            email
-          }))
-
-      : [
-          {
-            email: to
-          }
-        ];
-
-  if (!recipients.length) {
-
-    return {
-      sent: false,
-      reason: 'no-recipient'
-    };
-
-  }
-
-  const data =
-    JSON.stringify({
-
-      sender: {
-        name: brevoSenderName,
-        email: brevoSenderEmail
-      },
-
-      to: recipients,
-
-      subject,
-
-      textContent: text,
-
-      htmlContent:
-        html ||
-        `<p>${String(text)
-          .replace(/\n/g, '<br>')}</p>`
-
-    });
-
-  return new Promise(resolve => {
-
-    const request =
-      https.request(
-
-        {
-          hostname:
-            'api.brevo.com',
-
-          path:
-            '/v3/smtp/email',
-
-          method:
-            'POST',
-
-          headers: {
-
-            accept:
-              'application/json',
-
-            'api-key':
-              brevoApiKey,
-
-            'content-type':
-              'application/json',
-
-            'content-length':
-              Buffer.byteLength(data)
-
-          }
-
-        },
-
-        response => {
-
-          let body = '';
-
-          response.on(
-            'data',
-            chunk => {
-              body += chunk;
-            }
-          );
-
-          response.on(
-            'end',
-            () => {
-
-              if (
-                response.statusCode >= 200 &&
-                response.statusCode < 300
-              ) {
-
-                console.log(
-                  'Brevo email sent successfully.'
-                );
-
-                resolve({
-
-                  sent: true,
-
-                  response: body
-
-                });
-
-              } else {
-
-                console.error(
-                  'Brevo email error:',
-                  response.statusCode,
-                  body
-                );
-
-                resolve({
-
-                  sent: false,
-
-                  error:
-                    `Brevo returned HTTP ${response.statusCode}`
-
-                });
-
-              }
-
-            }
-          );
-
-        }
-
-      );
-
-    request.on(
-      'error',
-      error => {
-
-        console.error(
-          'Brevo request error:',
-          error.message
-        );
-
-        resolve({
-
-          sent: false,
-
-          error: error.message
-
-        });
-
-      }
-    );
-
-    request.write(data);
-
-    request.end();
-
-  });
-
-}
-
-
-/* =========================================================
-   CUSTOMER EMAIL NOTIFICATION
-========================================================= */
-
-async function notifyCustomer(
-  booking,
-  status
-) {
-
-  const result = {
-
-    email: {
-      sent: false
-    }
-
-  };
-
-  const allowedStatuses = [
-
-    'pending',
-    'accepted',
-    'rejected'
-
-  ];
-
-  if (
-    !allowedStatuses.includes(status)
-  ) {
-
-    return result;
-
-  }
-
-  if (!booking.email) {
-
-    return {
-
-      email: {
-
-        sent: false,
-
-        reason:
-          'no-customer-email'
-
-      }
-
-    };
-
-  }
-
-  let subject;
-
-  if (status === 'accepted') {
-
-    subject =
-      'Chende Booking Accepted';
-
-  } else if (
-    status === 'rejected'
-  ) {
-
-    subject =
-      'Chende Booking Rejected';
-
-  } else {
-
-    subject =
-      'Chende Booking Request Received';
-
-  }
-
-  const statusText =
-    status.toUpperCase();
-
-  const text =
-`Dear ${booking.customer_name},
-
-Your Chende booking request #${booking.id} has been ${status}.
-
-Event: ${booking.event_type}
-Date: ${formatDate(booking.event_date)}
-Time: ${formatTime(booking.start_time)}
-Venue: ${booking.location}
-Google Maps: ${booking.google_maps_link}
-Status: ${statusText}
-
-Open Google Maps:
-${booking.google_maps_link}
-
-You can check your booking status using your Booking ID and phone number.
-
-Shri Mahaganapathi Chende Balaga
-Mudradi, Karnataka
-Phone: 8971474693 / 8277069598 / 9844667599`;
-
-
-  const html =
-`
-<div style="font-family:Arial,sans-serif;line-height:1.6;">
-
-  <h2>
-    Shri Mahaganapathi Chende Balaga
-  </h2>
-
-  <p>
-    Dear ${booking.customer_name},
-  </p>
-
-  <p>
-    Your Chende booking request
-    <strong>#${booking.id}</strong>
-    has been
-    <strong>${status}</strong>.
-  </p>
-
-  <p>
-    <strong>Event:</strong>
-    ${booking.event_type}
-  </p>
-
-  <p>
-    <strong>Date:</strong>
-    ${formatDate(booking.event_date)}
-  </p>
-
-  <p>
-    <strong>Time:</strong>
-    ${formatTime(booking.start_time)}
-  </p>
-
-  <p>
-    <strong>Venue:</strong>
-    ${booking.location}
-  </p>
-
-  <p>
-    <strong>Google Maps:</strong>
-    <a
-      href="${booking.google_maps_link}"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Open Venue Location
-    </a>
-  </p>
-
-  <p>
-    <strong>Status:</strong>
-    ${statusText}
-  </p>
-
-  <p>
-    You can check your booking status using your
-    Booking ID and phone number.
-  </p>
-
-  <hr>
-
-  <p>
-    <strong>
-      Shri Mahaganapathi Chende Balaga
-    </strong>
-    <br>
-    Mudradi, Karnataka
-    <br>
-    Phone:
-    8971474693 /
-    8277069598 /
-    9844667599
-  </p>
-
-</div>
-`;
-
 
   try {
 
-    result.email =
-      await sendBrevoEmail({
+    const url =
+      new URL(value);
 
-        to: booking.email,
+    const host =
+      url.hostname.toLowerCase();
 
-        subject,
-
-        text,
-
-        html
-
-      });
-
-  } catch (e) {
-
-    console.error(
-      'Customer email notification failed:',
-      e.message
+    return (
+      host === "google.com" ||
+      host === "www.google.com" ||
+      host === "maps.google.com" ||
+      host === "maps.app.goo.gl" ||
+      host === "goo.gl"
     );
 
-    result.email = {
+  } catch (error) {
 
-      sent: false,
-
-      error: e.message
-
-    };
+    return false;
 
   }
-
-  return result;
 
 }
 
 
-/* =========================================================
-   ADMIN EMAIL — NEW BOOKING
-========================================================= */
-
-async function notifyAdminNewBooking(
-  booking
-) {
-
-  const result = {
-
-    email: {
-      sent: false
-    }
-
-  };
-
-  if (!adminEmails.length) {
-
-    return {
-
-      email: {
-
-        sent: false,
-
-        reason:
-          'admin-emails-not-configured'
-
-      }
-
-    };
-
-  }
-
-  const subject =
-    `New Chende Booking Request #${booking.id}`;
-
-  const text =
-`New Chende booking request #${booking.id} has been received.
-
-Customer: ${booking.customer_name}
-Phone: ${booking.phone}
-Email: ${booking.email || 'Not provided'}
-Event: ${booking.event_type}
-Date: ${formatDate(booking.event_date)}
-Time: ${formatTime(booking.start_time)}
-Venue: ${booking.location}
-Google Maps: ${booking.google_maps_link}
-Message: ${booking.message || 'None'}
-Status: PENDING
-
-Open Google Maps:
-${booking.google_maps_link}
-
-Please login to the Chende admin dashboard to review and accept or reject the booking.
-
-Shri Mahaganapathi Chende Balaga
-Mudradi, Karnataka`;
-
-
-  const html =
-`
-<div style="font-family:Arial,sans-serif;line-height:1.6;">
-
-  <h2>
-    New Chende Booking Request
-  </h2>
-
-  <p>
-    <strong>Booking ID:</strong>
-    #${booking.id}
-  </p>
-
-  <hr>
-
-  <p>
-    <strong>Customer:</strong>
-    ${booking.customer_name}
-  </p>
-
-  <p>
-    <strong>Phone:</strong>
-    ${booking.phone}
-  </p>
-
-  <p>
-    <strong>Email:</strong>
-    ${booking.email || 'Not provided'}
-  </p>
-
-  <p>
-    <strong>Event:</strong>
-    ${booking.event_type}
-  </p>
-
-  <p>
-    <strong>Date:</strong>
-    ${formatDate(booking.event_date)}
-  </p>
-
-  <p>
-    <strong>Time:</strong>
-    ${formatTime(booking.start_time)}
-  </p>
-
-  <p>
-    <strong>Venue:</strong>
-    ${booking.location}
-  </p>
-
-  <p>
-    <strong>Google Maps:</strong>
-    <a
-      href="${booking.google_maps_link}"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Open Venue Location
-    </a>
-  </p>
-
-  <p>
-    <strong>Message:</strong>
-    ${booking.message || 'None'}
-  </p>
-
-  <p>
-    <strong>Status:</strong>
-    PENDING
-  </p>
-
-  <hr>
-
-  <p>
-    Please login to the Chende admin dashboard
-    to review and accept or reject the booking.
-  </p>
-
-  <p>
-    <strong>
-      Shri Mahaganapathi Chende Balaga
-    </strong>
-    <br>
-    Mudradi, Karnataka
-  </p>
-
-</div>
-`;
-
-
-  const failures = [];
-
-  let sent = 0;
-
-  if (!emailReady) {
-
-    return {
-
-      email: {
-
-        sent: false,
-
-        reason:
-          'email-not-configured'
-
-      }
-
-    };
-
-  }
-
-  for (
-    const email of adminEmails
-  ) {
-
-    try {
-
-      const response =
-        await sendBrevoEmail({
-
-          to: email,
-
-          subject,
-
-          text,
-
-          html
-
-        });
-
-      if (response.sent) {
-
-        sent++;
-
-      } else {
-
-        failures.push({
-
-          email,
-
-          error:
-            response.error ||
-            response.reason
-
-        });
-
-      }
-
-    } catch (e) {
-
-      console.error(
-        `Admin email notification failed for ${email}:`,
-        e.message
-      );
-
-      failures.push({
-
-        email,
-
-        error: e.message
-
-      });
-
-    }
-
-  }
-
-  result.email = {
-
-    sent: sent > 0,
-
-    count: sent,
-
-    total: adminEmails.length,
-
-    failures
-
-  };
-
-  return result;
-
-}
-
-
-/* =========================================================
-   HEALTH CHECK
-========================================================= */
+/* =========================
+   HEALTH
+========================= */
 
 app.get(
-  '/api/health',
-  async (_, res) => {
+  "/api/health",
+  async function (req, res) {
 
     try {
 
-      await db.query(
-        'SELECT 1'
+      await pool.query(
+        "SELECT 1"
       );
 
       res.json({
-
-        ok: true,
-
-        service:
-          'Chende Booking API',
-
-        database: true,
-
-        notifications: {
-
-          email: emailReady,
-
-          adminEmails:
-            adminEmails.length
-
-        }
-
+        status: "ok",
+        database: true
       });
 
-    } catch (e) {
+    } catch (error) {
 
       console.error(
-        'Database connection error:',
-        e
+        "Health check error:",
+        error
       );
 
-      res.status(503).json({
-
-        ok: false,
-
-        service:
-          'Chende Booking API',
-
-        database: false,
-
-        error: e.message
-
+      res.status(500).json({
+        status: "error",
+        database: false
       });
 
     }
@@ -979,91 +180,74 @@ app.get(
 );
 
 
-/* =========================================================
+/* =========================
    CREATE BOOKING
-========================================================= */
+========================= */
 
 app.post(
-  '/api/bookings',
-  async (req, res) => {
-
-    const {
-
-      customer_name,
-
-      email,
-
-      phone,
-
-      event_type,
-
-      event_date,
-
-      start_time,
-
-      location,
-
-      google_maps_link,
-
-      message
-
-    } = req.body;
-
-
-    if (
-
-      !customer_name ||
-
-      !phone ||
-
-      !event_type ||
-
-      !event_date ||
-
-      !start_time ||
-
-      !location ||
-
-      !google_maps_link
-
-    ) {
-
-      return res.status(400).json({
-
-        error:
-          'Please fill all required fields.'
-
-      });
-
-    }
-
-
-    if (
-      !isValidGoogleMapsLink(
-        google_maps_link
-      )
-    ) {
-
-      return res.status(400).json({
-
-        error:
-          'Please enter a valid Google Maps link.'
-
-      });
-
-    }
-
+  "/api/bookings",
+  async function (req, res) {
 
     try {
 
-      /*
-        All new bookings start as PENDING.
-      */
+      const {
+        customer_name,
+        email,
+        phone,
+        event_type,
+        event_date,
+        start_time,
+        location,
+        message,
+        google_maps_link
+      } = req.body;
+
+
+      /* =========================
+         VALIDATION
+      ========================= */
+
+      if (
+        !customer_name ||
+        !phone ||
+        !event_type ||
+        !event_date ||
+        !start_time ||
+        !location ||
+        !google_maps_link
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Please complete all required booking fields."
+        });
+
+      }
+
+
+      if (
+        !isGoogleMapsLink(
+          google_maps_link
+        )
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Invalid Google Maps location."
+        });
+
+      }
+
+
+      /* =========================
+         INSERT
+      ========================= */
 
       const [result] =
-        await db.query(
+        await pool.execute(
 
-          `INSERT INTO bookings
+          `
+          INSERT INTO bookings
           (
             customer_name,
             email,
@@ -1077,108 +261,62 @@ app.post(
             status
           )
           VALUES
-          (
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            'pending'
-          )`,
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+          `,
 
           [
-
             customer_name,
-
             email || null,
-
             phone,
-
             event_type,
-
             event_date,
-
             start_time,
-
             location,
-
             google_maps_link,
-
             message || null
-
           ]
 
         );
 
 
-      const [[booking]] =
-        await db.query(
-
-          'SELECT * FROM bookings WHERE id=?',
-
-          [result.insertId]
-
-        );
+      const bookingId =
+        result.insertId;
 
 
-      /*
-        Customer receives booking-created email
-        if customer provided an email.
-      */
-
-      const customerNotifications =
-        await notifyCustomer(
-          booking,
-          'pending'
-        );
-
-
-      /*
-        Admin receives new booking email.
-      */
-
-      const adminNotifications =
-        await notifyAdminNewBooking(
-          booking
-        );
-
+      /* =========================
+         RESPONSE
+      ========================= */
 
       res.status(201).json({
 
-        id:
-          result.insertId,
+        success: true,
+
+        booking_id:
+          bookingId,
 
         status:
-          'pending',
+          "pending",
 
         message:
-          'Booking request created successfully.',
-
-        notifications: {
-
-          customer:
-            customerNotifications,
-
-          admin:
-            adminNotifications
-
-        }
+          "Booking request submitted successfully."
 
       });
 
-    } catch (e) {
 
-      console.error(e);
+    } catch (error) {
+
+      console.error(
+        "Booking error:",
+        error
+      );
 
 
       res.status(500).json({
 
-        error:
-          'Could not create booking.'
+        success: false,
+
+        message:
+          "Unable to submit booking request."
 
       });
 
@@ -1188,54 +326,103 @@ app.post(
 );
 
 
-/* =========================================================
-   CUSTOMER — CHECK BOOKING STATUS
-========================================================= */
+/* =========================
+   GET BOOKINGS
+========================= */
 
-app.post(
-  '/api/bookings/status',
-  async (req, res) => {
+app.get(
+  "/api/bookings",
+  async function (req, res) {
 
-    const id =
-      Number(req.body?.id);
+    try {
 
-    const phone =
-      String(
-        req.body?.phone || ''
-      ).trim();
+      const [
+        rows
+      ] =
+        await pool.query(
+          `
+          SELECT *
+          FROM bookings
+          ORDER BY id DESC
+          `
+        );
 
 
-    if (!id || !phone) {
+      res.json(rows);
 
-      return res.status(400).json({
 
-        error:
-          'Booking ID and phone number are required.'
+    } catch (error) {
+
+      console.error(
+        "Get bookings error:",
+        error
+      );
+
+
+      res.status(500).json({
+
+        message:
+          "Unable to load bookings."
 
       });
 
     }
 
+  }
+);
+
+
+/* =========================
+   BOOKING STATUS
+========================= */
+
+app.post(
+  "/api/bookings/status",
+  async function (req, res) {
 
     try {
 
-      const [rows] =
-        await db.query(
+      const {
+        id
+      } = req.body;
 
-          `SELECT
+
+      if (!id) {
+
+        return res.status(400).json({
+
+          message:
+            "Booking ID is required."
+
+        });
+
+      }
+
+
+      const [
+        rows
+      ] =
+        await pool.execute(
+
+          `
+          SELECT
             id,
             customer_name,
+            phone,
+            email,
             event_type,
             event_date,
             start_time,
             location,
             google_maps_link,
+            message,
             status,
             created_at
           FROM bookings
-          WHERE id=? AND phone=?`,
+          WHERE id = ?
+          `,
 
-          [id, phone]
+          [id]
 
         );
 
@@ -1244,32 +431,81 @@ app.post(
 
         return res.status(404).json({
 
-          error:
-            'No booking found with that Booking ID and phone number.'
+          message:
+            "Booking not found."
 
         });
 
       }
+
+
+      const booking =
+        rows[0];
 
 
       res.json({
 
-        ok: true,
+        success: true,
 
-        booking:
-          rows[0]
+        booking: {
+
+          id:
+            booking.id,
+
+          customer_name:
+            booking.customer_name,
+
+          phone:
+            booking.phone,
+
+          email:
+            booking.email,
+
+          event_type:
+            booking.event_type,
+
+          event_date:
+            formatDate(
+              booking.event_date
+            ),
+
+          start_time:
+            formatTime(
+              booking.start_time
+            ),
+
+          location:
+            booking.location,
+
+          google_maps_link:
+            booking.google_maps_link,
+
+          message:
+            booking.message,
+
+          status:
+            booking.status,
+
+          created_at:
+            booking.created_at
+
+        }
 
       });
 
-    } catch (e) {
 
-      console.error(e);
+    } catch (error) {
+
+      console.error(
+        "Booking status error:",
+        error
+      );
 
 
       res.status(500).json({
 
-        error:
-          'Could not check booking status.'
+        message:
+          "Unable to load booking."
 
       });
 
@@ -1279,192 +515,50 @@ app.post(
 );
 
 
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-app.post(
-  '/api/admin/login',
-  async (req, res) => {
-
-    if (
-
-      !req.body?.password ||
-
-      req.body.password !==
-      ADMIN_PASSWORD
-
-    ) {
-
-      return res.status(401).json({
-
-        error:
-          'Invalid admin password.'
-
-      });
-
-    }
-
-
-    res.json({
-
-      ok: true,
-
-      key:
-        ADMIN_KEY
-
-    });
-
-  }
-);
-
-
-/* =========================================================
-   ADMIN — GET ALL BOOKINGS
-========================================================= */
-
-app.get(
-  '/api/bookings',
-  requireAdmin,
-  async (_, res) => {
-
-    try {
-
-      const [rows] =
-        await db.query(
-
-          `SELECT *
-           FROM bookings
-           ORDER BY created_at DESC`
-
-        );
-
-
-      res.json(rows);
-
-    } catch (e) {
-
-      console.error(e);
-
-
-      res.status(500).json({
-
-        error:
-          'Database unavailable'
-
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   ADMIN — ACCEPT / REJECT BOOKING
-========================================================= */
+/* =========================
+   UPDATE BOOKING STATUS
+========================= */
 
 app.patch(
-  '/api/bookings/:id/status',
-  requireAdmin,
-  async (req, res) => {
-
-    const id =
-      Number(req.params.id);
-
-
-    const allowed = [
-
-      'pending',
-
-      'accepted',
-
-      'rejected'
-
-    ];
-
-
-    const status =
-      req.body?.status;
-
-
-    if (
-      !id ||
-      !allowed.includes(status)
-    ) {
-
-      return res.status(400).json({
-
-        error:
-          'Invalid booking status.'
-
-      });
-
-    }
-
+  "/api/bookings/:id/status",
+  async function (req, res) {
 
     try {
 
-      /*
-        Get current booking.
-      */
+      const id =
+        req.params.id;
 
-      const [existingRows] =
-        await db.query(
+      const {
+        status
+      } = req.body;
 
-          'SELECT * FROM bookings WHERE id=?',
-
-          [id]
-
-        );
-
-
-      if (!existingRows.length) {
-
-        return res.status(404).json({
-
-          error:
-            'Booking not found.'
-
-        });
-
-      }
-
-
-      const currentBooking =
-        existingRows[0];
-
-
-      /*
-        Only pending bookings can
-        be accepted or rejected.
-      */
 
       if (
-        currentBooking.status !==
-        'pending'
+        status !== "accepted" &&
+        status !== "rejected"
       ) {
 
         return res.status(400).json({
 
-          error:
-            `This booking is already ${currentBooking.status}.`
+          message:
+            "Status must be accepted or rejected."
 
         });
 
       }
 
 
-      /*
-        Update status.
-      */
+      const [
+        result
+      ] =
+        await pool.execute(
 
-      const [result] =
-        await db.query(
-
-          `UPDATE bookings
-           SET status=?
-           WHERE id=? AND status='pending'`,
+          `
+          UPDATE bookings
+          SET status = ?
+          WHERE id = ?
+          AND status = 'pending'
+          `,
 
           [
             status,
@@ -1474,65 +568,42 @@ app.patch(
         );
 
 
-      if (!result.affectedRows) {
+      if (
+        result.affectedRows === 0
+      ) {
 
-        return res.status(400).json({
+        return res.status(404).json({
 
-          error:
-            'Booking could not be updated.'
+          message:
+            "Booking not found or already processed."
 
         });
 
       }
 
 
-      /*
-        Get updated booking.
-      */
-
-      const [[booking]] =
-        await db.query(
-
-          'SELECT * FROM bookings WHERE id=?',
-
-          [id]
-
-        );
-
-
-      /*
-        Notify customer by email.
-      */
-
-      const notifications =
-        await notifyCustomer(
-
-          booking,
-
-          status
-
-        );
-
-
       res.json({
 
-        ok: true,
+        success: true,
 
-        booking,
-
-        notifications
+        message:
+          `Booking ${status}.`
 
       });
 
-    } catch (e) {
 
-      console.error(e);
+    } catch (error) {
+
+      console.error(
+        "Status update error:",
+        error
+      );
 
 
       res.status(500).json({
 
-        error:
-          'Could not update booking status.'
+        message:
+          "Unable to update booking status."
 
       });
 
@@ -1542,52 +613,43 @@ app.patch(
 );
 
 
-/* =========================================================
-   ADMIN — CLEAR ALL BOOKINGS
-========================================================= */
+/* =========================
+   CLEAR BOOKINGS
+========================= */
 
-app.post(
-  '/api/admin/clear-bookings',
-  requireAdmin,
-  async (_, res) => {
+app.delete(
+  "/api/bookings",
+  async function (req, res) {
 
     try {
 
-      await db.query(
-        'DELETE FROM bookings'
-      );
-
-
-      await db.query(
-        'ALTER TABLE bookings AUTO_INCREMENT = 1'
+      await pool.query(
+        "DELETE FROM bookings"
       );
 
 
       res.json({
 
-        ok: true,
+        success: true,
 
         message:
-          'All bookings cleared successfully.',
-
-        bookings: 0
+          "All bookings deleted."
 
       });
 
-    } catch (e) {
+
+    } catch (error) {
 
       console.error(
-        'Failed to clear bookings:',
-        e
+        "Clear bookings error:",
+        error
       );
 
 
       res.status(500).json({
 
-        ok: false,
-
-        error:
-          'Could not clear bookings.'
+        message:
+          "Unable to delete bookings."
 
       });
 
@@ -1597,16 +659,32 @@ app.post(
 );
 
 
-/* =========================================================
+/* =========================
+   ROOT
+========================= */
+
+app.get(
+  "/",
+  function (req, res) {
+
+    res.send(
+      "Shri Mahaganapathi Chende Balaga API is running."
+    );
+
+  }
+);
+
+
+/* =========================
    START SERVER
-========================================================= */
+========================= */
 
 app.listen(
   PORT,
-  () => {
+  function () {
 
     console.log(
-      `Chende Booking API running on http://localhost:${PORT}`
+      `Server running on port ${PORT}`
     );
 
   }

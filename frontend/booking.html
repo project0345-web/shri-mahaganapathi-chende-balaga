@@ -10,7 +10,7 @@
 
     <style>
         /* ==============================
-           BOOKING FORM FIX
+           BOOKING PAGE
         ============================== */
 
         .booking-section {
@@ -79,7 +79,6 @@
             line-height: 1.5 !important;
             visibility: visible !important;
             opacity: 1 !important;
-            overflow: visible !important;
         }
 
         #bookingForm.form label > input,
@@ -143,67 +142,6 @@
         .optional {
             color: #c58b3a !important;
             font-size: 9px !important;
-        }
-
-        .location-control {
-            display: block !important;
-            width: 100% !important;
-        }
-
-        #bookingForm #location {
-            display: block !important;
-            width: 100% !important;
-            height: 52px !important;
-            min-height: 52px !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-
-        .location-button {
-            display: block !important;
-            width: 100% !important;
-            min-height: 45px !important;
-            margin-top: 9px !important;
-            padding: 10px 15px !important;
-            border: 1px solid #b77b31 !important;
-            border-radius: 8px !important;
-            background: #241a12 !important;
-            color: #e2ad5d !important;
-            cursor: pointer !important;
-            font-weight: 700 !important;
-        }
-
-        .location-button:hover {
-            background: #b77b31 !important;
-            color: #ffffff !important;
-        }
-
-        #locationStatus {
-            display: block !important;
-            margin-top: 7px !important;
-            font-size: 9px !important;
-            color: #a99988 !important;
-        }
-
-        #googleMapsLink {
-            display: none !important;
-        }
-
-        #locationMapBox {
-            display: none;
-            grid-column: 1 / -1;
-            padding: 12px;
-            border: 1px solid #73542f;
-            border-radius: 9px;
-        }
-
-        .location-success {
-            color: #75d18d;
-            margin-bottom: 7px;
-        }
-
-        .text-link {
-            color: #d7a04e;
         }
 
         #bookingForm .submit-button {
@@ -295,6 +233,7 @@
     </div>
 </div>
 
+
 <header class="header">
 
     <div class="container nav-container">
@@ -313,12 +252,19 @@
         </button>
 
         <nav class="nav" id="navMenu">
+
             <a href="index.html">Home</a>
+
             <a href="index.html#about">About</a>
+
             <a href="index.html#services">Services</a>
+
             <a href="index.html#team">Team</a>
+
             <a href="index.html#gallery">Gallery</a>
+
             <a href="booking.html" class="active">Book Now</a>
+
         </nav>
 
         <button
@@ -333,6 +279,7 @@
     </div>
 
 </header>
+
 
 <main>
 
@@ -356,6 +303,7 @@
 
             </div>
 
+
             <div class="booking-card">
 
                 <form
@@ -364,7 +312,10 @@
                     autocomplete="on"
                 >
 
+                    <!-- FULL NAME -->
+
                     <label>
+
                         Full Name
 
                         <input
@@ -374,9 +325,14 @@
                             autocomplete="name"
                             placeholder="Enter your full name"
                         >
+
                     </label>
 
+
+                    <!-- PHONE -->
+
                     <label>
+
                         Phone
 
                         <input
@@ -386,11 +342,19 @@
                             autocomplete="tel"
                             placeholder="Enter your phone number"
                         >
+
                     </label>
 
+
+                    <!-- EMAIL -->
+
                     <label>
+
                         Email
-                        <span class="optional">(Optional)</span>
+
+                        <span class="optional">
+                            (Optional)
+                        </span>
 
                         <input
                             type="email"
@@ -398,26 +362,58 @@
                             autocomplete="email"
                             placeholder="Enter your email address"
                         >
+
                     </label>
 
+
+                    <!-- EVENT TYPE -->
+
                     <label>
+
                         Event Type
 
                         <select
                             name="event_type"
                             required
                         >
-                            <option value="">Select Event Type</option>
-                            <option value="Wedding">Wedding</option>
-                            <option value="Bhajan">Bhajan</option>
-                            <option value="Procession">Procession</option>
-                            <option value="Temple Event">Temple Event</option>
-                            <option value="Cultural Program">Cultural Program</option>
-                            <option value="Other">Other</option>
+
+                            <option value="">
+                                Select Event Type
+                            </option>
+
+                            <option value="Wedding">
+                                Wedding
+                            </option>
+
+                            <option value="Bhajan">
+                                Bhajan
+                            </option>
+
+                            <option value="Procession">
+                                Procession
+                            </option>
+
+                            <option value="Temple Event">
+                                Temple Event
+                            </option>
+
+                            <option value="Cultural Program">
+                                Cultural Program
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
                         </select>
+
                     </label>
 
+
+                    <!-- EVENT DATE -->
+
                     <label>
+
                         Event Date
 
                         <input
@@ -426,9 +422,14 @@
                             id="eventDate"
                             required
                         >
+
                     </label>
 
+
+                    <!-- START TIME -->
+
                     <label>
+
                         Start Time
 
                         <input
@@ -436,64 +437,29 @@
                             name="start_time"
                             required
                         >
+
                     </label>
+
+
+                    <!-- VENUE / LOCATION -->
 
                     <label style="grid-column: 1 / -1;">
+
                         Venue / Location
 
-                        <div class="location-control">
-
-                            <input
-                                type="text"
-                                name="location"
-                                id="location"
-                                required
-                                readonly
-                                placeholder="Click the button to detect your location"
-                            >
-
-                            <button
-                                type="button"
-                                id="detectLocationBtn"
-                                class="location-button"
-                            >
-                                📍 Detect My Location
-                            </button>
-
-                        </div>
-
-                        <small id="locationStatus">
-                            Click "Detect My Location" and allow location access.
-                        </small>
+                        <input
+                            type="text"
+                            name="location"
+                            id="location"
+                            required
+                            autocomplete="street-address"
+                            placeholder="Enter venue or location"
+                        >
 
                     </label>
 
-                    <input
-                        type="hidden"
-                        name="google_maps_link"
-                        id="googleMapsLink"
-                    >
 
-                    <div
-                        id="locationMapBox"
-                        class="location-map-box"
-                    >
-
-                        <div class="location-success">
-                            ✓ Location detected successfully
-                        </div>
-
-                        <a
-                            id="openMapLink"
-                            href="#"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="text-link"
-                        >
-                            Open detected location in Google Maps ↗
-                        </a>
-
-                    </div>
+                    <!-- ADDITIONAL REQUIREMENTS -->
 
                     <label style="grid-column: 1 / -1;">
 
@@ -507,6 +473,9 @@
 
                     </label>
 
+
+                    <!-- SUBMIT -->
+
                     <button
                         type="submit"
                         class="submit-button gold"
@@ -515,18 +484,29 @@
                         Submit Booking Request ↗
                     </button>
 
+
+                    <!-- MESSAGE -->
+
                     <div
                         id="bookingMsg"
                         class="booking-message"
                         role="status"
                     ></div>
 
+
+                    <!-- SERVICE STATUS -->
+
                     <div
                         id="bookingServiceStatus"
                         class="service-status"
                     >
+
                         <span class="dot"></span>
-                        <span>Checking booking service...</span>
+
+                        <span>
+                            Checking booking service...
+                        </span>
+
                     </div>
 
                 </form>
@@ -538,6 +518,7 @@
     </section>
 
 </main>
+
 
 <script src="js/main.js"></script>
 

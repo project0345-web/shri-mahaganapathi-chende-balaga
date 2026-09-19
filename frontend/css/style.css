@@ -1199,39 +1199,6 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   LOCATION
-========================= */
-
-.location-controls {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-#detectLocationBtn {
-  border: 1px solid #a86d2c;
-  background: #fff8ed;
-  color: #8c581e;
-  border-radius: 9px;
-  padding: 12px 16px;
-  cursor: pointer;
-  font-weight: 800;
-}
-
-#detectLocationBtn:hover {
-  background: #a86d2c;
-  color: #fff;
-}
-
-.location-status {
-  display: block;
-  margin-top: 8px;
-  color: #756a5d;
-  font-size: 9px;
-}
-
-/* =========================
    OPTIONAL
 ========================= */
 

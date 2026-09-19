@@ -1969,3 +1969,71 @@ footer {
     scroll-behavior: auto !important;
   }
 }
+
+.booking .form label > input,
+.booking .form label > select,
+.booking .form label > textarea,
+.form label > input,
+.form label > select,
+.form label > textarea {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  width: 100% !important;
+  height: 50px !important;
+  min-height: 50px !important;
+  max-height: none !important;
+  padding: 12px 14px !important;
+  margin-top: 8px !important;
+  background: #ffffff !important;
+  color: #18130e !important;
+  border: 1px solid #c8b79f !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  z-index: 20 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  transform: none !important;
+}
+
+.booking .form label > textarea,
+.form label > textarea {
+  height: 110px !important;
+  min-height: 110px !important;
+  resize: vertical !important;
+}
+
+.booking .form label > select,
+.form label > select {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  cursor: pointer !important;
+}
+
+.booking .form label > input::placeholder,
+.booking .form label > textarea::placeholder,
+.form label > input::placeholder,
+.form label > textarea::placeholder {
+  color: #777777 !important;
+  opacity: 1 !important;
+}
+
+.booking .form label > input:focus,
+.booking .form label > select:focus,
+.booking .form label > textarea:focus,
+.form label > input:focus,
+.form label > select:focus,
+.form label > textarea:focus {
+  outline: none !important;
+  border-color: #b8792d !important;
+  box-shadow: 0 0 0 3px rgba(184, 121, 45, 0.15) !important;
+}
+
+.booking .form label {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+}

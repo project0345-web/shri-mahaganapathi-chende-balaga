@@ -23,7 +23,7 @@
 
   <style>
     /* =========================================
-       BOOKING FORM - FORCE INPUTS TO BE VISIBLE
+       BOOKING FORM - FORCE FULL VISIBILITY
     ========================================= */
 
     #bookingForm {
@@ -33,6 +33,20 @@
       padding: 32px !important;
       box-sizing: border-box !important;
       overflow: visible !important;
+
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      clip: auto !important;
+      clip-path: none !important;
+      position: relative !important;
+      z-index: 20 !important;
+    }
+
+    #bookingForm.form {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
     }
 
     #bookingForm .two {
@@ -46,9 +60,12 @@
       display: block !important;
       width: 100% !important;
       margin-bottom: 20px !important;
+
       color: #eadbc8 !important;
+
       visibility: visible !important;
       opacity: 1 !important;
+
       overflow: visible !important;
       position: relative !important;
     }
@@ -57,8 +74,10 @@
     #bookingForm select,
     #bookingForm textarea {
       display: block !important;
+
       visibility: visible !important;
       opacity: 1 !important;
+
       position: relative !important;
 
       width: 100% !important;
@@ -82,11 +101,13 @@
       font-size: 14px !important;
 
       transform: none !important;
+
       clip: auto !important;
       clip-path: none !important;
 
       overflow: visible !important;
-      z-index: 10 !important;
+
+      z-index: 20 !important;
     }
 
     #bookingForm textarea {
@@ -118,35 +139,49 @@
       display: flex !important;
       width: 100% !important;
       min-height: 52px !important;
+
       align-items: center !important;
       justify-content: center !important;
+
       margin-top: 5px !important;
+
       cursor: pointer !important;
+
       border: none !important;
+
+      visibility: visible !important;
+      opacity: 1 !important;
     }
 
     #bookingMsg {
       display: block !important;
       min-height: 20px !important;
+
       visibility: visible !important;
       opacity: 1 !important;
     }
 
     #bookingServiceStatus {
       display: flex !important;
+
       align-items: center !important;
       gap: 8px !important;
+
       min-height: 20px !important;
+
       visibility: visible !important;
       opacity: 1 !important;
     }
 
     #bookingServiceStatus .dot {
       display: inline-block !important;
+
       width: 8px !important;
       height: 8px !important;
       min-width: 8px !important;
+
       border-radius: 50% !important;
+
       background: #78ce8b !important;
     }
 
@@ -156,6 +191,7 @@
     }
 
     @media (max-width: 700px) {
+
       #bookingForm {
         padding: 22px !important;
       }
@@ -169,6 +205,7 @@
       #bookingForm textarea {
         font-size: 16px !important;
       }
+
     }
   </style>
 </head>
@@ -206,20 +243,35 @@
 
     </a>
 
-    <button id="menuBtn" type="button" aria-label="Open menu">
+    <button
+      id="menuBtn"
+      type="button"
+      aria-label="Open menu"
+    >
       ☰
     </button>
 
     <nav id="nav">
 
       <a href="#home" data-i18n="navHome">Home</a>
+
       <a href="#about" data-i18n="navAbout">About</a>
+
       <a href="#services" data-i18n="navServices">Services</a>
+
       <a href="#team" data-i18n="navTeam">Team</a>
+
       <a href="#gallery" data-i18n="navGallery">Gallery</a>
+
       <a href="#booking" data-i18n="navBooking">Booking</a>
-      <a href="status.html" data-i18n="navStatus">Check Status</a>
-      <a href="#contact" data-i18n="navContact">Contact</a>
+
+      <a href="status.html" data-i18n="navStatus">
+        Check Status
+      </a>
+
+      <a href="#contact" data-i18n="navContact">
+        Contact
+      </a>
 
       <button
         id="langBtn"
@@ -241,7 +293,7 @@
 
       <a
         class="book"
-        href="booking.html"
+        href="#booking"
         data-i18n="bookNow"
       >
         Book Now
@@ -315,6 +367,7 @@
 
           <div>
             <b>10+</b>
+
             <small data-i18n="statPerformers">
               Performers
             </small>
@@ -322,6 +375,7 @@
 
           <div>
             <b>100+</b>
+
             <small data-i18n="statPrograms">
               Programs
             </small>
@@ -329,6 +383,7 @@
 
           <div>
             <b>100%</b>
+
             <small data-i18n="statTradition">
               Tradition
             </small>
@@ -338,7 +393,11 @@
 
       </div>
 
-      <div class="sound-wave" aria-hidden="true">
+      <div
+        class="sound-wave"
+        aria-hidden="true"
+      >
+        <i></i>
         <i></i>
         <i></i>
         <i></i>
@@ -372,19 +431,27 @@
     <!-- MARQUEE -->
 
     <div class="marquee">
+
       <div>
         🥁 CHENDE • MUDRADI • KARNATAKA • TRADITION • RHYTHM • DEVOTION •
         SHRI MAHAGANAPATHI • CHENDE • MUDRADI • KARNATAKA • TRADITION •
         RHYTHM • DEVOTION •
       </div>
+
     </div>
 
     <!-- ABOUT -->
 
-    <section id="about" class="section">
+    <section
+      id="about"
+      class="section"
+    >
 
       <p class="label">
-        01 / <span data-i18n="labelStory">OUR STORY</span>
+        01 /
+        <span data-i18n="labelStory">
+          OUR STORY
+        </span>
       </p>
 
       <div class="about-grid">
@@ -399,7 +466,8 @@
           </p>
 
           <h2 data-i18n="aboutTitle">
-            A rhythm that brings people <span>together.</span>
+            A rhythm that brings people
+            <span>together.</span>
           </h2>
 
           <p
@@ -433,13 +501,20 @@
         <div class="about-card reveal">
 
           <div class="mandala"></div>
+
           <div class="orbit"></div>
 
-          <div class="om">ॐ</div>
+          <div class="om">
+            ॐ
+          </div>
 
-          <h3>ಶ್ರೀ ಮಹಾಗಣಪತಿ</h3>
+          <h3>
+            ಶ್ರೀ ಮಹಾಗಣಪತಿ
+          </h3>
 
-          <small>CHENDE BALAGA • MUDRADI</small>
+          <small>
+            CHENDE BALAGA • MUDRADI
+          </small>
 
         </div>
 
@@ -455,7 +530,10 @@
     >
 
       <p class="label">
-        02 / <span data-i18n="labelOccasions">OCCASIONS</span>
+        02 /
+        <span data-i18n="labelOccasions">
+          OCCASIONS
+        </span>
       </p>
 
       <div class="heading">
@@ -470,7 +548,8 @@
           </p>
 
           <h2 data-i18n="servicesTitle">
-            Made for your <span>special moment.</span>
+            Made for your
+            <span>special moment.</span>
           </h2>
 
         </div>
@@ -488,6 +567,7 @@
       <div class="service-grid">
 
         <article class="reveal">
+
           <i>01</i>
           <strong>💍</strong>
 
@@ -499,9 +579,11 @@
             Grand Chende performances for entrances, processions and wedding
             celebrations.
           </p>
+
         </article>
 
         <article class="reveal">
+
           <i>02</i>
           <strong>🛕</strong>
 
@@ -513,9 +595,11 @@
             Traditional performances for temple programs, festivals and
             auspicious occasions.
           </p>
+
         </article>
 
         <article class="reveal">
+
           <i>03</i>
           <strong>🎊</strong>
 
@@ -527,9 +611,11 @@
             High-energy rhythm for processions, community celebrations and
             public events.
           </p>
+
         </article>
 
         <article class="reveal">
+
           <i>04</i>
           <strong>🎶</strong>
 
@@ -541,6 +627,7 @@
             Rhythm support for bhajans, cultural programs and local
             celebrations.
           </p>
+
         </article>
 
       </div>
@@ -549,7 +636,10 @@
 
     <!-- TEAM -->
 
-    <section id="team" class="team">
+    <section
+      id="team"
+      class="team"
+    >
 
       <img
         src="assets/team.jpg"
@@ -586,19 +676,29 @@
       </div>
 
       <div class="team-caption">
+
         SHRI MAHAGANAPATHI<br>
+
         <b>CHENDE BALAGA</b>
+
         <small>MUDRADI</small>
+
       </div>
 
     </section>
 
     <!-- GALLERY -->
 
-    <section id="gallery" class="section">
+    <section
+      id="gallery"
+      class="section"
+    >
 
       <p class="label">
-        04 / <span data-i18n="labelGallery">VISUALS</span>
+        04 /
+        <span data-i18n="labelGallery">
+          VISUALS
+        </span>
       </p>
 
       <div class="heading">
@@ -613,7 +713,8 @@
           </p>
 
           <h2 data-i18n="galleryTitle">
-            Tradition in <span>every frame.</span>
+            Tradition in
+            <span>every frame.</span>
           </h2>
 
         </div>
@@ -667,13 +768,21 @@
 
     <!-- BOOKING -->
 
-    <section id="booking" class="booking">
+    <section
+      id="booking"
+      class="booking"
+    >
 
       <p class="label">
-        05 / <span data-i18n="labelBooking">BOOKING</span>
+        05 /
+        <span data-i18n="labelBooking">
+          BOOKING
+        </span>
       </p>
 
       <div class="booking-grid">
+
+        <!-- BOOKING INFORMATION -->
 
         <div class="reveal">
 
@@ -685,7 +794,8 @@
           </p>
 
           <h2 data-i18n="bookingTitle">
-            Book the <span>Balaga.</span>
+            Book the
+            <span>Balaga.</span>
           </h2>
 
           <p data-i18n="bookingText">
@@ -761,9 +871,15 @@
 
         <!-- BOOKING FORM -->
 
+        <!-- IMPORTANT:
+             No "reveal" class here.
+             This prevents the booking form from being hidden by the
+             scroll-reveal JavaScript.
+        -->
+
         <form
           id="bookingForm"
-          class="form reveal"
+          class="form"
           autocomplete="on"
         >
 
@@ -804,6 +920,7 @@
             <label data-i18n="emailLabel">
 
               Email
+
               <span class="optional">
                 (Optional)
               </span>
@@ -888,6 +1005,8 @@
 
           </div>
 
+          <!-- VENUE / LOCATION TEXT FIELD -->
+
           <label data-i18n="locationLabel">
 
             Venue / Location
@@ -902,6 +1021,8 @@
 
           </label>
 
+          <!-- ADDITIONAL REQUIREMENTS -->
+
           <label data-i18n="messageLabel">
 
             Additional Requirements
@@ -914,6 +1035,8 @@
 
           </label>
 
+          <!-- SUBMIT -->
+
           <button
             class="gold"
             type="submit"
@@ -923,10 +1046,14 @@
             Submit Booking Request ↗
           </button>
 
+          <!-- BOOKING RESPONSE -->
+
           <p
             id="bookingMsg"
             role="status"
           ></p>
+
+          <!-- SERVICE STATUS -->
 
           <div
             id="bookingServiceStatus"
@@ -971,7 +1098,10 @@
     >
 
       <p class="label">
-        06 / <span data-i18n="labelContact">CONTACT</span>
+        06 /
+        <span data-i18n="labelContact">
+          CONTACT
+        </span>
       </p>
 
       <div class="contact-grid">
@@ -986,7 +1116,9 @@
           </p>
 
           <h2 data-i18n="contactTitle">
-            Bring the <span>Chende</span> to your occasion.
+            Bring the
+            <span>Chende</span>
+            to your occasion.
           </h2>
 
           <p

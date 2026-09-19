@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -1203,7 +1204,7 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   LOCATION / GOOGLE MAPS
+   LOCATION
 ========================= */
 
 .form label input[name="location"] {
@@ -1312,7 +1313,7 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   OPTIONAL TEXT
+   OPTIONAL
 ========================= */
 
 .optional {
@@ -1568,10 +1569,21 @@ footer {
    SCROLL REVEAL
 ========================= */
 
+/*
+   IMPORTANT:
+   Content remains visible even if JavaScript
+   does not add the .show class.
+*/
+
 .reveal {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.animate-hidden {
   opacity: 0;
   transform: translateY(28px);
-  transition: 0.8s;
 }
 
 .reveal.show {

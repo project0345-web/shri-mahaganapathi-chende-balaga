@@ -1,317 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Book Chende - Shri Mahaganapathi Chende Balaga</title>
+    <title>Book Chende - Shri Mahaganapathi Chende Balaga</title>
 
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-  <!-- Loader -->
-  <div id="loader">
+<div id="loader">
     <div class="loader-content">
-      <img src="assets/logo.jpg" alt="Shri Mahaganapathi Chende Balaga">
-      <p>Loading...</p>
+        <img src="assets/logo.jpg" alt="Shri Mahaganapathi Chende Balaga">
+        <p>Loading...</p>
     </div>
-  </div>
+</div>
 
-  <!-- Header -->
-  <header class="header">
+<header class="header">
 
     <div class="container nav-container">
 
-      <a href="index.html" class="logo">
-        Shri Mahaganapathi Chende Balaga
-      </a>
+        <a href="index.html" class="logo">
+            Shri Mahaganapathi Chende Balaga
+        </a>
 
-      <button class="menu-toggle" id="menuToggle">
-        ☰
-      </button>
+        <button class="menu-toggle" id="menuToggle" type="button">
+            ☰
+        </button>
 
-      <nav class="nav" id="navMenu">
+        <nav class="nav" id="navMenu">
+            <a href="index.html">Home</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#services">Services</a>
+            <a href="index.html#team">Team</a>
+            <a href="index.html#gallery">Gallery</a>
+            <a href="booking.html" class="active">Book Now</a>
+        </nav>
 
-        <a href="index.html">Home</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#team">Team</a>
-        <a href="index.html#gallery">Gallery</a>
-        <a href="booking.html" class="active">Book Now</a>
-
-      </nav>
-
-      <button id="themeToggle" class="theme-toggle">
-        ◐
-      </button>
+        <button id="themeToggle" class="theme-toggle" type="button">
+            ◐
+        </button>
 
     </div>
 
-  </header>
+</header>
 
-
-  <!-- Booking Section -->
-  <main>
+<main>
 
     <section class="booking-section">
 
-      <div class="container">
+        <div class="container">
 
-        <div class="section-heading">
+            <div class="section-heading">
 
-          <span class="section-tag">
-            BOOKING
-          </span>
+                <span class="section-tag">
+                    BOOKING
+                </span>
 
-          <h1>
-            Book Chende Seva
-          </h1>
+                <h1>
+                    Book Chende Seva
+                </h1>
 
-          <p>
-            Fill in your event details and submit your booking request.
-          </p>
-
-        </div>
-
-
-        <div class="booking-card">
-
-          <form id="bookingForm" class="form">
-
-
-            <!-- Full Name -->
-            <label>
-              Full Name
-
-              <input
-                type="text"
-                name="customer_name"
-                required
-                autocomplete="name"
-                placeholder="Enter your full name"
-              >
-
-            </label>
-
-
-            <!-- Phone -->
-            <label>
-              Phone
-
-              <input
-                type="tel"
-                name="phone"
-                required
-                autocomplete="tel"
-                placeholder="Enter your phone number"
-              >
-
-            </label>
-
-
-            <!-- Email -->
-            <label>
-              Email
-              <span class="optional">
-                (Optional)
-              </span>
-
-              <input
-                type="email"
-                name="email"
-                autocomplete="email"
-                placeholder="Enter your email address"
-              >
-
-            </label>
-
-
-            <!-- Event Type -->
-            <label>
-              Event Type
-
-              <select name="event_type" required>
-
-                <option value="">
-                  Select
-                </option>
-
-                <option value="Wedding">
-                  Wedding
-                </option>
-
-                <option value="Bhajan">
-                  Bhajan
-                </option>
-
-                <option value="Procession">
-                  Procession
-                </option>
-
-                <option value="Temple Event">
-                  Temple Event
-                </option>
-
-                <option value="Cultural Program">
-                  Cultural Program
-                </option>
-
-                <option value="Other">
-                  Other
-                </option>
-
-              </select>
-
-            </label>
-
-
-            <!-- Event Date -->
-            <label>
-              Event Date
-
-              <input
-                type="date"
-                name="event_date"
-                id="eventDate"
-                required
-              >
-
-            </label>
-
-
-            <!-- Start Time -->
-            <label>
-              Start Time
-
-              <input
-                type="time"
-                name="start_time"
-                required
-              >
-
-            </label>
-
-
-            <!-- Location -->
-            <label>
-
-              Venue / Location
-
-              <div class="location-control">
-
-                <input
-                  type="text"
-                  name="location"
-                  id="location"
-                  required
-                  readonly
-                  placeholder="Click the button to detect your location"
-                >
-
-                <button
-                  type="button"
-                  id="detectLocationBtn"
-                  class="location-button"
-                >
-                  📍 Detect My Location
-                </button>
-
-              </div>
-
-              <small
-                id="locationStatus"
-                class="muted"
-              >
-                Click "Detect My Location" and allow location access.
-              </small>
-
-            </label>
-
-
-            <!-- Hidden Google Maps Link -->
-            <input
-              type="hidden"
-              name="google_maps_link"
-              id="googleMapsLink"
-            >
-
-
-            <!-- Open Map -->
-            <div
-              id="locationMapBox"
-              class="location-map-box"
-              style="display:none;"
-            >
-
-              <div class="location-success">
-                ✓ Location detected successfully
-              </div>
-
-              <a
-                id="openMapLink"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-link"
-              >
-                Open detected location in Google Maps ↗
-              </a>
+                <p>
+                    Fill in your event details and submit your booking request.
+                </p>
 
             </div>
 
+            <div class="booking-card">
 
-            <!-- Additional Requirements -->
-            <label>
+                <form id="bookingForm" class="form">
 
-              Additional Requirements
+                    <label>
+                        Full Name
 
-              <textarea
-                name="message"
-                rows="5"
-                placeholder="Any additional information..."
-              ></textarea>
+                        <input
+                            type="text"
+                            name="customer_name"
+                            required
+                            autocomplete="name"
+                            placeholder="Enter your full name"
+                        >
+                    </label>
 
-            </label>
+                    <label>
+                        Phone
 
+                        <input
+                            type="tel"
+                            name="phone"
+                            required
+                            autocomplete="tel"
+                            placeholder="Enter your phone number"
+                        >
+                    </label>
 
-            <!-- Submit -->
-            <button
-              type="submit"
-              class="submit-button"
-            >
-              Submit Booking Request ↗
-            </button>
+                    <label>
+                        Email
+                        <span class="optional">(Optional)</span>
 
+                        <input
+                            type="email"
+                            name="email"
+                            autocomplete="email"
+                            placeholder="Enter your email address"
+                        >
+                    </label>
 
-            <!-- Message -->
-            <div
-              id="bookingMsg"
-              class="booking-message"
-            ></div>
+                    <label>
+                        Event Type
 
+                        <select name="event_type" required>
+                            <option value="">Select</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Bhajan">Bhajan</option>
+                            <option value="Procession">Procession</option>
+                            <option value="Temple Event">Temple Event</option>
+                            <option value="Cultural Program">Cultural Program</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </label>
 
-            <!-- Service Status -->
-            <div
-              id="bookingServiceStatus"
-              class="service-status"
-            >
-              Checking booking service...
+                    <label>
+                        Event Date
+
+                        <input
+                            type="date"
+                            name="event_date"
+                            id="eventDate"
+                            required
+                        >
+                    </label>
+
+                    <label>
+                        Start Time
+
+                        <input
+                            type="time"
+                            name="start_time"
+                            required
+                        >
+                    </label>
+
+                    <label>
+
+                        Venue / Location
+
+                        <div class="location-control">
+
+                            <input
+                                type="text"
+                                name="location"
+                                id="location"
+                                required
+                                readonly
+                                placeholder="Click the button to detect your location"
+                            >
+
+                            <button
+                                type="button"
+                                id="detectLocationBtn"
+                                class="location-button"
+                            >
+                                📍 Detect My Location
+                            </button>
+
+                        </div>
+
+                        <small
+                            id="locationStatus"
+                            class="muted"
+                        >
+                            Click "Detect My Location" and allow location access.
+                        </small>
+
+                    </label>
+
+                    <input
+                        type="hidden"
+                        name="google_maps_link"
+                        id="googleMapsLink"
+                    >
+
+                    <div
+                        id="locationMapBox"
+                        class="location-map-box"
+                        style="display:none;"
+                    >
+
+                        <div class="location-success">
+                            ✓ Location detected successfully
+                        </div>
+
+                        <a
+                            id="openMapLink"
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-link"
+                        >
+                            Open detected location in Google Maps ↗
+                        </a>
+
+                    </div>
+
+                    <label>
+
+                        Additional Requirements
+
+                        <textarea
+                            name="message"
+                            rows="5"
+                            placeholder="Any additional information..."
+                        ></textarea>
+
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="submit-button gold"
+                        id="bookingSubmit"
+                    >
+                        Submit Booking Request ↗
+                    </button>
+
+                    <div
+                        id="bookingMsg"
+                        class="booking-message"
+                        role="status"
+                    ></div>
+
+                    <div
+                        id="bookingServiceStatus"
+                        class="service-status"
+                    >
+                        <span class="dot"></span>
+                        <span>Checking booking service...</span>
+                    </div>
+
+                </form>
+
             </div>
 
-          </form>
-
         </div>
-
-      </div>
 
     </section>
 
-  </main>
+</main>
 
-
-  <script src="js/main.js"></script>
+<script src="js/main.js"></script>
 
 </body>
 </html>

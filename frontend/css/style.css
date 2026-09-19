@@ -323,7 +323,6 @@ nav > a:not(.book):hover::after {
   display: none;
   border: 0;
   font-size: 27px;
-  background: transparent;
 }
 
 /* =========================
@@ -968,7 +967,7 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   BOOKING SECTION
+   BOOKING
 ========================= */
 
 .booking {
@@ -1017,7 +1016,7 @@ nav > a:not(.book):hover::after {
 .booking-grid {
   align-items: start;
   position: relative;
-  z-index: 2;
+  z-index: 5;
 }
 
 .booking h2 {
@@ -1027,17 +1026,6 @@ nav > a:not(.book):hover::after {
 .booking-grid > div > p:not(.eyebrow) {
   color: #b9aa99;
   max-width: 480px;
-}
-
-.standalone-booking h1 {
-  font: 700 clamp(45px, 5vw, 70px) / 1.05 Cinzel, serif;
-  letter-spacing: -2px;
-  margin: 12px 0 24px;
-  color: #fff;
-}
-
-.standalone-booking h1 span {
-  color: #e0a650;
 }
 
 .contact-mini {
@@ -1114,87 +1102,94 @@ nav > a:not(.book):hover::after {
   width: 100%;
   max-width: 720px;
   padding: 32px;
-  background: linear-gradient(
-    145deg,
-    rgba(255, 250, 242, 0.98),
-    rgba(244, 234, 218, 0.98)
-  );
+  background: #fffaf2;
   color: #1b1510;
-  border: 1px solid rgba(180, 126, 58, 0.28);
+  border: 1px solid #b47e3a;
   border-radius: 22px;
-  box-shadow:
-    0 28px 90px rgba(0, 0, 0, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
   position: relative;
-  z-index: 5;
-  overflow: visible;
+  z-index: 10;
 }
 
 .form label {
-  display: block;
-  position: relative;
+  display: block !important;
+  width: 100%;
   color: #30271f;
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  margin-bottom: 17px;
+  margin-bottom: 18px;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .form input,
 .form select,
 .form textarea {
   display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  height: 50px !important;
+  min-height: 50px !important;
+
+  margin: 8px 0 0 0 !important;
+  padding: 12px 14px !important;
+
+  background: #ffffff !important;
+  color: #18130e !important;
+
+  border: 1px solid #c8b79f !important;
+  border-radius: 9px !important;
+
   visibility: visible !important;
   opacity: 1 !important;
-  width: 100%;
-  min-height: 48px;
-  margin-top: 8px;
-  padding: 13px 14px;
-  color: #241c15 !important;
-  background: #fff !important;
-  border: 1px solid #cbbda9 !important;
-  border-radius: 9px !important;
-  outline: none;
-  box-shadow: 0 5px 16px rgba(72, 45, 19, 0.06);
+
+  outline: none !important;
+  z-index: 20 !important;
+
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+
+  box-shadow: 0 5px 16px rgba(72, 45, 19, 0.08);
+
   transition:
-    border-color 0.25s,
-    box-shadow 0.25s,
-    transform 0.25s;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 .form textarea {
-  min-height: 100px;
-  resize: vertical;
+  height: 110px !important;
+  min-height: 110px !important;
+  resize: vertical !important;
+}
+
+.form select {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  cursor: pointer;
 }
 
 .form input::placeholder,
 .form textarea::placeholder {
-  color: #8b8175;
-  opacity: 1;
-}
-
-.form select {
-  cursor: pointer;
-  appearance: auto;
-  -webkit-appearance: auto;
-  padding-right: 40px !important;
+  color: #777 !important;
+  opacity: 1 !important;
 }
 
 .form input:hover,
 .form select:hover,
 .form textarea:hover {
-  border-color: #b7854b !important;
+  border-color: #b8792d !important;
 }
 
 .form input:focus,
 .form select:focus,
 .form textarea:focus {
-  border-color: #a86d2c !important;
-  box-shadow:
-    0 0 0 4px rgba(168, 109, 44, 0.11),
-    0 8px 22px rgba(72, 45, 19, 0.08) !important;
-  transform: translateY(-1px);
+  outline: none !important;
+  border-color: #b8792d !important;
+  box-shadow: 0 0 0 3px rgba(184, 121, 45, 0.15) !important;
 }
 
 .form .two {
@@ -1206,14 +1201,6 @@ nav > a:not(.book):hover::after {
 /* =========================
    LOCATION
 ========================= */
-
-.form label input[name="location"] {
-  min-height: 50px;
-}
-
-.form label input[name="google_maps_link"] {
-  min-height: 50px;
-}
 
 .location-controls {
   display: flex;
@@ -1230,19 +1217,11 @@ nav > a:not(.book):hover::after {
   padding: 12px 16px;
   cursor: pointer;
   font-weight: 800;
-  transition: 0.25s;
 }
 
 #detectLocationBtn:hover {
   background: #a86d2c;
   color: #fff;
-  transform: translateY(-1px);
-}
-
-#detectLocationBtn:disabled {
-  opacity: 0.65;
-  cursor: wait;
-  transform: none;
 }
 
 .location-status {
@@ -1250,66 +1229,6 @@ nav > a:not(.book):hover::after {
   margin-top: 8px;
   color: #756a5d;
   font-size: 9px;
-  line-height: 1.5;
-}
-
-.location-status.success {
-  color: #397047;
-}
-
-.location-map-box {
-  display: none;
-  margin-top: 10px;
-}
-
-.maps-input-row {
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-.maps-input-row input {
-  flex: 1;
-  min-width: 220px;
-  margin-top: 0 !important;
-}
-
-.maps-input-row .text-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 14px;
-  margin-top: 0;
-  border: 1px solid #a86d2c;
-  border-radius: 9px;
-  color: #8c581e;
-  background: #fff8ed;
-  white-space: nowrap;
-  transition: 0.25s;
-}
-
-.maps-input-row .text-link:hover {
-  color: #fff;
-  background: #a86d2c;
-  border-color: #a86d2c;
-  transform: translateY(-1px);
-}
-
-.form label small {
-  display: block;
-  margin-top: 7px;
-  color: #756a5d;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-  text-transform: none;
-  line-height: 1.5;
-}
-
-.form label small strong {
-  color: #8c581e;
 }
 
 /* =========================
@@ -1324,28 +1243,6 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   PAYMENT BOX
-========================= */
-
-.payment-box {
-  min-height: 74px;
-  padding: 15px 16px;
-  margin: 7px 0 16px;
-  background: linear-gradient(135deg, #f4e9d8, #eee0ca);
-  border: 1px solid #d8bd95;
-  border-radius: 12px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.payment-box > strong {
-  font-size: 19px;
-}
-
-.payment-mark {
-  box-shadow: 0 7px 18px rgba(155, 93, 29, 0.22);
-}
-
-/* =========================
    SUBMIT BUTTON
 ========================= */
 
@@ -1354,25 +1251,15 @@ nav > a:not(.book):hover::after {
   min-height: 54px;
   border-radius: 10px;
   font-size: 14px;
-  letter-spacing: 0.5px;
   cursor: pointer;
   position: relative;
-  z-index: 5;
-  box-shadow: 0 14px 30px rgba(155, 93, 29, 0.24);
-}
-
-.form .gold:hover {
-  box-shadow: 0 18px 36px rgba(155, 93, 29, 0.32);
+  z-index: 20;
+  border: 0;
 }
 
 .form .gold:disabled {
   opacity: 0.6;
   cursor: wait;
-  transform: none;
-}
-
-.form .gold:not(:disabled):hover {
-  transform: translateY(-2px);
 }
 
 /* =========================
@@ -1380,15 +1267,15 @@ nav > a:not(.book):hover::after {
 ========================= */
 
 #bookingMsg {
+  display: block;
   min-height: 20px;
   padding: 9px 12px;
+  margin-top: 9px;
   border-radius: 8px;
   background: #f5eadc;
-  border: 1px solid transparent;
   color: #995d20;
   font-size: 11px;
   font-weight: 800;
-  margin-top: 9px;
 }
 
 #bookingMsg.error {
@@ -1404,7 +1291,7 @@ nav > a:not(.book):hover::after {
 }
 
 /* =========================
-   BOOKING SERVICE STATUS
+   SERVICE STATUS
 ========================= */
 
 .booking-service-status {
@@ -1415,7 +1302,6 @@ nav > a:not(.book):hover::after {
   margin-top: 12px;
   font-size: 9px;
   color: #8f806f;
-  letter-spacing: 0.4px;
 }
 
 .booking-service-status .dot {
@@ -1509,7 +1395,11 @@ nav > a:not(.book):hover::after {
 }
 
 .details small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 2px;
   color: #9d692d;
+  margin-bottom: 2px;
 }
 
 .details b {
@@ -1695,36 +1585,7 @@ footer {
 
 .dark .form input::placeholder,
 .dark .form textarea::placeholder {
-  color: #a99884;
-}
-
-.dark .form label small {
-  color: #b9a998;
-}
-
-.dark .maps-input-row .text-link,
-.dark #detectLocationBtn {
-  background: #241b14;
-  color: #e2ad5d;
-  border-color: #765733;
-}
-
-.dark .maps-input-row .text-link:hover,
-.dark #detectLocationBtn:hover {
-  color: #fff;
-  background: #a86d2c;
-}
-
-/* =========================
-   BOOKING FORM GENERIC SUPPORT
-========================= */
-
-.booking-form label input,
-.booking-form label select,
-.booking-form label textarea {
-  display: block;
-  width: 100%;
-  margin-top: 8px;
+  color: #a99884 !important;
 }
 
 /* =========================
@@ -1871,7 +1732,7 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .two,
+  .form .two,
   .contact-mini {
     grid-template-columns: 1fr;
   }
@@ -1902,31 +1763,7 @@ footer {
   .form input,
   .form select,
   .form textarea {
-    min-height: 46px;
     font-size: 16px !important;
-  }
-
-  .maps-input-row {
-    flex-direction: column;
-  }
-
-  .maps-input-row input {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .maps-input-row .text-link {
-    width: 100%;
-    min-height: 46px;
-  }
-
-  .location-controls {
-    flex-direction: column;
-  }
-
-  #detectLocationBtn {
-    width: 100%;
-    min-height: 46px;
   }
 }
 
@@ -1950,10 +1787,6 @@ footer {
   .contact-mini b {
     font-size: 10px;
   }
-
-  .standalone-booking h1 {
-    font-size: 46px;
-  }
 }
 
 /* =========================
@@ -1968,72 +1801,4 @@ footer {
     transition: none !important;
     scroll-behavior: auto !important;
   }
-}
-
-.booking .form label > input,
-.booking .form label > select,
-.booking .form label > textarea,
-.form label > input,
-.form label > select,
-.form label > textarea {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-  width: 100% !important;
-  height: 50px !important;
-  min-height: 50px !important;
-  max-height: none !important;
-  padding: 12px 14px !important;
-  margin-top: 8px !important;
-  background: #ffffff !important;
-  color: #18130e !important;
-  border: 1px solid #c8b79f !important;
-  border-radius: 8px !important;
-  box-sizing: border-box !important;
-  z-index: 20 !important;
-  overflow: visible !important;
-  clip: auto !important;
-  clip-path: none !important;
-  transform: none !important;
-}
-
-.booking .form label > textarea,
-.form label > textarea {
-  height: 110px !important;
-  min-height: 110px !important;
-  resize: vertical !important;
-}
-
-.booking .form label > select,
-.form label > select {
-  appearance: auto !important;
-  -webkit-appearance: auto !important;
-  cursor: pointer !important;
-}
-
-.booking .form label > input::placeholder,
-.booking .form label > textarea::placeholder,
-.form label > input::placeholder,
-.form label > textarea::placeholder {
-  color: #777777 !important;
-  opacity: 1 !important;
-}
-
-.booking .form label > input:focus,
-.booking .form label > select:focus,
-.booking .form label > textarea:focus,
-.form label > input:focus,
-.form label > select:focus,
-.form label > textarea:focus {
-  outline: none !important;
-  border-color: #b8792d !important;
-  box-shadow: 0 0 0 3px rgba(184, 121, 45, 0.15) !important;
-}
-
-.booking .form label {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  overflow: visible !important;
 }

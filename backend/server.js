@@ -55,7 +55,7 @@ const pool = mysql.createPool({
 
 
 /* =========================
-   EMAIL CONFIGURATION
+   BREVO EMAIL CONFIG
 ========================= */
 
 const BREVO_API_KEY =
@@ -76,7 +76,7 @@ const ADMIN_EMAILS =
 
 
 /* =========================
-   HELPERS
+   DATE FORMAT
 ========================= */
 
 function formatDate(date) {
@@ -98,6 +98,10 @@ function formatDate(date) {
 
 }
 
+
+/* =========================
+   TIME FORMAT
+========================= */
 
 function formatTime(time) {
 
@@ -128,10 +132,14 @@ function formatTime(time) {
 
 
 /* =========================
-   SEND ADMIN EMAIL
+   SEND BREVO EMAIL
 ========================= */
 
-async function sendAdminBookingEmail(booking) {
+async function sendBrevoEmail({
+  to,
+  subject,
+  htmlContent
+}) {
 
   if (!BREVO_API_KEY) {
 
@@ -139,7 +147,7 @@ async function sendAdminBookingEmail(booking) {
       "BREVO_API_KEY is missing."
     );
 
-    return;
+    return false;
 
   }
 
@@ -149,132 +157,43 @@ async function sendAdminBookingEmail(booking) {
       "BREVO_SENDER_EMAIL is missing."
     );
 
-    return;
+    return false;
 
   }
 
-  if (!ADMIN_EMAILS.length) {
+  if (!to) {
 
     console.error(
-      "ADMIN_EMAILS is missing."
+      "Email recipient is missing."
     );
 
-    return;
+    return false;
 
   }
-
-
-  const recipients =
-    ADMIN_EMAILS.map(email => ({
-      email: email
-    }));
-
-
-  const htmlContent = `
-
-    <div style="
-      font-family: Arial, sans-serif;
-      max-width: 650px;
-      margin: auto;
-      padding: 20px;
-      color: #222;
-    ">
-
-      <h2 style="
-        margin-bottom: 5px;
-      ">
-        New Chende Booking Request
-      </h2>
-
-      <p>
-        A new booking request has been submitted
-        through the Shri Mahaganapathi Chende Balaga website.
-      </p>
-
-      <hr>
-
-      <h3>Booking Details</h3>
-
-      <table
-        cellpadding="8"
-        cellspacing="0"
-        style="
-          width: 100%;
-          border-collapse: collapse;
-        "
-      >
-
-        <tr>
-          <td><strong>Booking ID</strong></td>
-          <td>${booking.id}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Name</strong></td>
-          <td>${booking.customer_name}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Phone</strong></td>
-          <td>${booking.phone}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Email</strong></td>
-          <td>${booking.email || "Not provided"}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Event Type</strong></td>
-          <td>${booking.event_type}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Event Date</strong></td>
-          <td>${formatDate(booking.event_date)}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Start Time</strong></td>
-          <td>${formatTime(booking.start_time)}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Venue / Location</strong></td>
-          <td>${booking.location}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Additional Requirements</strong></td>
-          <td>${booking.message || "None"}</td>
-        </tr>
-
-        <tr>
-          <td><strong>Status</strong></td>
-          <td>Pending</td>
-        </tr>
-
-      </table>
-
-      <hr>
-
-      <p>
-        Please open the admin dashboard to review this booking.
-      </p>
-
-      <p style="
-        color: #777;
-        font-size: 13px;
-      ">
-        Shri Mahaganapathi Chende Balaga — Mudradi
-      </p>
-
-    </div>
-
-  `;
 
 
   try {
+
+    const recipients =
+      Array.isArray(to)
+        ? to
+            .filter(Boolean)
+            .map(email => ({
+              email
+            }))
+        : [
+            {
+              email: to
+            }
+          ];
+
+
+    if (!recipients.length) {
+
+      return false;
+
+    }
+
 
     const response =
       await fetch(
@@ -285,7 +204,7 @@ async function sendAdminBookingEmail(booking) {
 
           headers: {
 
-            "accept":
+            accept:
               "application/json",
 
             "api-key":
@@ -312,7 +231,7 @@ async function sendAdminBookingEmail(booking) {
               recipients,
 
             subject:
-              `New Chende Booking #${booking.id}`,
+              subject,
 
             htmlContent:
               htmlContent
@@ -335,14 +254,17 @@ async function sendAdminBookingEmail(booking) {
         responseText
       );
 
-      return;
+      return false;
 
     }
 
 
     console.log(
-      "Admin booking email sent successfully."
+      "Email sent successfully:",
+      subject
     );
+
+    return true;
 
 
   } catch (error) {
@@ -352,7 +274,424 @@ async function sendAdminBookingEmail(booking) {
       error
     );
 
+    return false;
+
   }
+
+}
+
+
+/* =========================
+   BOOKING DETAILS HTML
+========================= */
+
+function bookingDetailsHTML(booking) {
+
+  return `
+
+    <table
+      cellpadding="8"
+      cellspacing="0"
+      style="
+        width:100%;
+        border-collapse:collapse;
+        font-family:Arial,sans-serif;
+      "
+    >
+
+      <tr>
+        <td><strong>Booking ID</strong></td>
+        <td>${booking.id}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Name</strong></td>
+        <td>${booking.customer_name}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Phone</strong></td>
+        <td>${booking.phone}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Email</strong></td>
+        <td>${booking.email || "Not provided"}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Event Type</strong></td>
+        <td>${booking.event_type}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Event Date</strong></td>
+        <td>${formatDate(booking.event_date)}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Start Time</strong></td>
+        <td>${formatTime(booking.start_time)}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Venue / Location</strong></td>
+        <td>${booking.location}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Additional Requirements</strong></td>
+        <td>${booking.message || "None"}</td>
+      </tr>
+
+    </table>
+
+  `;
+
+}
+
+
+/* =========================
+   ADMIN NEW BOOKING EMAIL
+========================= */
+
+async function sendAdminBookingEmail(booking) {
+
+  if (!ADMIN_EMAILS.length) {
+
+    console.error(
+      "ADMIN_EMAILS is missing."
+    );
+
+    return;
+
+  }
+
+
+  const htmlContent = `
+
+    <div style="
+      max-width:650px;
+      margin:auto;
+      padding:20px;
+      font-family:Arial,sans-serif;
+      color:#222;
+    ">
+
+      <h2>
+        New Chende Booking Request
+      </h2>
+
+      <p>
+        A new booking request has been submitted
+        through the Shri Mahaganapathi Chende Balaga website.
+      </p>
+
+      <hr>
+
+      ${bookingDetailsHTML(booking)}
+
+      <hr>
+
+      <p>
+        <strong>Status:</strong> Pending
+      </p>
+
+      <p>
+        Please open the admin dashboard to review
+        this booking.
+      </p>
+
+      <p style="
+        color:#777;
+        font-size:13px;
+      ">
+        Shri Mahaganapathi Chende Balaga — Mudradi
+      </p>
+
+    </div>
+
+  `;
+
+
+  await sendBrevoEmail({
+
+    to:
+      ADMIN_EMAILS,
+
+    subject:
+      `New Chende Booking #${booking.id}`,
+
+    htmlContent:
+      htmlContent
+
+  });
+
+}
+
+
+/* =========================
+   CUSTOMER BOOKING RECEIVED
+========================= */
+
+async function sendCustomerBookingReceivedEmail(
+  booking
+) {
+
+  if (!booking.email) {
+
+    console.log(
+      "Customer email not provided. Skipping customer email."
+    );
+
+    return;
+
+  }
+
+
+  const htmlContent = `
+
+    <div style="
+      max-width:650px;
+      margin:auto;
+      padding:20px;
+      font-family:Arial,sans-serif;
+      color:#222;
+    ">
+
+      <h2>
+        Booking Request Received
+      </h2>
+
+      <p>
+        Dear ${booking.customer_name},
+      </p>
+
+      <p>
+        Thank you for submitting your booking request
+        to <strong>Shri Mahaganapathi Chende Balaga</strong>.
+      </p>
+
+      <p>
+        Your request has been received successfully
+        and is currently <strong>pending confirmation</strong>.
+      </p>
+
+      <hr>
+
+      ${bookingDetailsHTML(booking)}
+
+      <hr>
+
+      <p>
+        We will contact you regarding the confirmation
+        of your booking.
+      </p>
+
+      <p>
+        Thank you.
+      </p>
+
+      <p>
+        <strong>
+          Shri Mahaganapathi Chende Balaga
+        </strong><br>
+        Mudradi
+      </p>
+
+    </div>
+
+  `;
+
+
+  await sendBrevoEmail({
+
+    to:
+      booking.email,
+
+    subject:
+      `Booking Request Received #${booking.id}`,
+
+    htmlContent:
+      htmlContent
+
+  });
+
+}
+
+
+/* =========================
+   CUSTOMER CONFIRMED EMAIL
+========================= */
+
+async function sendCustomerConfirmedEmail(
+  booking
+) {
+
+  if (!booking.email) {
+
+    console.log(
+      "Customer email not provided. Skipping confirmation email."
+    );
+
+    return;
+
+  }
+
+
+  const htmlContent = `
+
+    <div style="
+      max-width:650px;
+      margin:auto;
+      padding:20px;
+      font-family:Arial,sans-serif;
+      color:#222;
+    ">
+
+      <h2>
+        Booking Confirmed
+      </h2>
+
+      <p>
+        Dear ${booking.customer_name},
+      </p>
+
+      <p>
+        Your booking request with
+        <strong>Shri Mahaganapathi Chende Balaga</strong>
+        has been <strong>confirmed</strong>.
+      </p>
+
+      <hr>
+
+      ${bookingDetailsHTML(booking)}
+
+      <hr>
+
+      <p>
+        <strong>
+          Booking Status: CONFIRMED
+        </strong>
+      </p>
+
+      <p>
+        Thank you for choosing
+        Shri Mahaganapathi Chende Balaga.
+      </p>
+
+      <p>
+        <strong>
+          Shri Mahaganapathi Chende Balaga
+        </strong><br>
+        Mudradi
+      </p>
+
+    </div>
+
+  `;
+
+
+  await sendBrevoEmail({
+
+    to:
+      booking.email,
+
+    subject:
+      `Booking Confirmed #${booking.id}`,
+
+    htmlContent:
+      htmlContent
+
+  });
+
+}
+
+
+/* =========================
+   CUSTOMER CANCELLED EMAIL
+========================= */
+
+async function sendCustomerCancelledEmail(
+  booking
+) {
+
+  if (!booking.email) {
+
+    console.log(
+      "Customer email not provided. Skipping cancellation email."
+    );
+
+    return;
+
+  }
+
+
+  const htmlContent = `
+
+    <div style="
+      max-width:650px;
+      margin:auto;
+      padding:20px;
+      font-family:Arial,sans-serif;
+      color:#222;
+    ">
+
+      <h2>
+        Booking Cancelled
+      </h2>
+
+      <p>
+        Dear ${booking.customer_name},
+      </p>
+
+      <p>
+        We regret to inform you that your booking request
+        with <strong>Shri Mahaganapathi Chende Balaga</strong>
+        has been <strong>cancelled</strong>.
+      </p>
+
+      <hr>
+
+      ${bookingDetailsHTML(booking)}
+
+      <hr>
+
+      <p>
+        <strong>
+          Booking Status: CANCELLED
+        </strong>
+      </p>
+
+      <p>
+        If you have any questions, please contact
+        Shri Mahaganapathi Chende Balaga.
+      </p>
+
+      <p>
+        <strong>
+          Shri Mahaganapathi Chende Balaga
+        </strong><br>
+        Mudradi
+      </p>
+
+    </div>
+
+  `;
+
+
+  await sendBrevoEmail({
+
+    to:
+      booking.email,
+
+    subject:
+      `Booking Cancelled #${booking.id}`,
+
+    htmlContent:
+      htmlContent
+
+  });
 
 }
 
@@ -373,9 +712,11 @@ app.get(
 
       res.json({
 
-        status: "ok",
+        status:
+          "ok",
 
-        database: true
+        database:
+          true
 
       });
 
@@ -388,9 +729,11 @@ app.get(
 
       res.status(500).json({
 
-        status: "error",
+        status:
+          "error",
 
-        database: false
+        database:
+          false
 
       });
 
@@ -512,11 +855,7 @@ app.post(
         result.insertId;
 
 
-      /* =========================
-         SEND ADMIN EMAIL
-      ========================= */
-
-      await sendAdminBookingEmail({
+      const booking = {
 
         id:
           bookingId,
@@ -525,7 +864,7 @@ app.post(
           customer_name,
 
         email:
-          email,
+          email || null,
 
         phone:
           phone,
@@ -543,9 +882,25 @@ app.post(
           location,
 
         message:
-          message
+          message || null,
 
-      });
+        status:
+          "pending"
+
+      };
+
+
+      /* =========================
+         SEND EMAILS
+      ========================= */
+
+      await sendAdminBookingEmail(
+        booking
+      );
+
+      await sendCustomerBookingReceivedEmail(
+        booking
+      );
 
 
       /* =========================
@@ -554,7 +909,8 @@ app.post(
 
       res.status(201).json({
 
-        success: true,
+        success:
+          true,
 
         booking_id:
           bookingId,
@@ -577,7 +933,8 @@ app.post(
 
       res.status(500).json({
 
-        success: false,
+        success:
+          false,
 
         message:
           "Unable to submit booking request."
@@ -705,7 +1062,8 @@ app.post(
 
       res.json({
 
-        success: true,
+        success:
+          true,
 
         booking: {
 
@@ -807,6 +1165,69 @@ app.patch(
       }
 
 
+      /* =========================
+         GET BOOKING BEFORE UPDATE
+      ========================= */
+
+      const [rows] =
+        await pool.execute(
+
+          `
+          SELECT
+            id,
+            customer_name,
+            phone,
+            email,
+            event_type,
+            event_date,
+            start_time,
+            location,
+            message,
+            status,
+            created_at
+          FROM bookings
+          WHERE id = ?
+          `,
+
+          [id]
+
+        );
+
+
+      if (!rows.length) {
+
+        return res.status(404).json({
+
+          message:
+            "Booking not found."
+
+        });
+
+      }
+
+
+      const booking =
+        rows[0];
+
+
+      if (
+        booking.status !== "pending"
+      ) {
+
+        return res.status(404).json({
+
+          message:
+            "Booking not found or already processed."
+
+        });
+
+      }
+
+
+      /* =========================
+         UPDATE STATUS
+      ========================= */
+
       const [result] =
         await pool.execute(
 
@@ -842,9 +1263,47 @@ app.patch(
       }
 
 
+      /* =========================
+         UPDATED BOOKING
+      ========================= */
+
+      booking.status =
+        status;
+
+
+      /* =========================
+         CUSTOMER EMAIL
+      ========================= */
+
+      if (
+        status === "accepted"
+      ) {
+
+        await sendCustomerConfirmedEmail(
+          booking
+        );
+
+      }
+
+      else if (
+        status === "rejected"
+      ) {
+
+        await sendCustomerCancelledEmail(
+          booking
+        );
+
+      }
+
+
+      /* =========================
+         RESPONSE
+      ========================= */
+
       res.json({
 
-        success: true,
+        success:
+          true,
 
         message:
           `Booking ${status}.`
@@ -889,7 +1348,8 @@ app.delete(
 
       res.json({
 
-        success: true,
+        success:
+          true,
 
         message:
           "All bookings deleted."

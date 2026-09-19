@@ -6,8 +6,7 @@ const mysql = require("mysql2/promise");
 
 const app = express();
 
-const PORT =
-  process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 
 /* =========================
@@ -20,9 +19,7 @@ app.use(
   })
 );
 
-app.use(
-  express.json()
-);
+app.use(express.json());
 
 
 /* =========================
@@ -40,11 +37,9 @@ const pool = mysql.createPool({
 
   user: process.env.DB_USER,
 
-  password:
-    process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD,
 
-  database:
-    process.env.DB_NAME,
+  database: process.env.DB_NAME,
 
   waitForConnections: true,
 
@@ -60,6 +55,27 @@ const pool = mysql.createPool({
 
 
 /* =========================
+   EMAIL CONFIGURATION
+========================= */
+
+const BREVO_API_KEY =
+  process.env.BREVO_API_KEY;
+
+const BREVO_SENDER_EMAIL =
+  process.env.BREVO_SENDER_EMAIL;
+
+const BREVO_SENDER_NAME =
+  process.env.BREVO_SENDER_NAME ||
+  "SHRI MAHAGANAPATHI CHENDE MUDRADI";
+
+const ADMIN_EMAILS =
+  (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map(email => email.trim())
+    .filter(Boolean);
+
+
+/* =========================
    HELPERS
 ========================= */
 
@@ -69,8 +85,7 @@ function formatDate(date) {
     return "";
   }
 
-  const d =
-    new Date(date);
+  const d = new Date(date);
 
   return d.toLocaleDateString(
     "en-IN",
@@ -113,6 +128,236 @@ function formatTime(time) {
 
 
 /* =========================
+   SEND ADMIN EMAIL
+========================= */
+
+async function sendAdminBookingEmail(booking) {
+
+  if (!BREVO_API_KEY) {
+
+    console.error(
+      "BREVO_API_KEY is missing."
+    );
+
+    return;
+
+  }
+
+  if (!BREVO_SENDER_EMAIL) {
+
+    console.error(
+      "BREVO_SENDER_EMAIL is missing."
+    );
+
+    return;
+
+  }
+
+  if (!ADMIN_EMAILS.length) {
+
+    console.error(
+      "ADMIN_EMAILS is missing."
+    );
+
+    return;
+
+  }
+
+
+  const recipients =
+    ADMIN_EMAILS.map(email => ({
+      email: email
+    }));
+
+
+  const htmlContent = `
+
+    <div style="
+      font-family: Arial, sans-serif;
+      max-width: 650px;
+      margin: auto;
+      padding: 20px;
+      color: #222;
+    ">
+
+      <h2 style="
+        margin-bottom: 5px;
+      ">
+        New Chende Booking Request
+      </h2>
+
+      <p>
+        A new booking request has been submitted
+        through the Shri Mahaganapathi Chende Balaga website.
+      </p>
+
+      <hr>
+
+      <h3>Booking Details</h3>
+
+      <table
+        cellpadding="8"
+        cellspacing="0"
+        style="
+          width: 100%;
+          border-collapse: collapse;
+        "
+      >
+
+        <tr>
+          <td><strong>Booking ID</strong></td>
+          <td>${booking.id}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Name</strong></td>
+          <td>${booking.customer_name}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Phone</strong></td>
+          <td>${booking.phone}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Email</strong></td>
+          <td>${booking.email || "Not provided"}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Event Type</strong></td>
+          <td>${booking.event_type}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Event Date</strong></td>
+          <td>${formatDate(booking.event_date)}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Start Time</strong></td>
+          <td>${formatTime(booking.start_time)}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Venue / Location</strong></td>
+          <td>${booking.location}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Additional Requirements</strong></td>
+          <td>${booking.message || "None"}</td>
+        </tr>
+
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>Pending</td>
+        </tr>
+
+      </table>
+
+      <hr>
+
+      <p>
+        Please open the admin dashboard to review this booking.
+      </p>
+
+      <p style="
+        color: #777;
+        font-size: 13px;
+      ">
+        Shri Mahaganapathi Chende Balaga — Mudradi
+      </p>
+
+    </div>
+
+  `;
+
+
+  try {
+
+    const response =
+      await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "accept":
+              "application/json",
+
+            "api-key":
+              BREVO_API_KEY,
+
+            "content-type":
+              "application/json"
+
+          },
+
+          body: JSON.stringify({
+
+            sender: {
+
+              name:
+                BREVO_SENDER_NAME,
+
+              email:
+                BREVO_SENDER_EMAIL
+
+            },
+
+            to:
+              recipients,
+
+            subject:
+              `New Chende Booking #${booking.id}`,
+
+            htmlContent:
+              htmlContent
+
+          })
+
+        }
+      );
+
+
+    const responseText =
+      await response.text();
+
+
+    if (!response.ok) {
+
+      console.error(
+        "Brevo email error:",
+        response.status,
+        responseText
+      );
+
+      return;
+
+    }
+
+
+    console.log(
+      "Admin booking email sent successfully."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Brevo request error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
    HEALTH
 ========================= */
 
@@ -127,8 +372,11 @@ app.get(
       );
 
       res.json({
+
         status: "ok",
+
         database: true
+
       });
 
     } catch (error) {
@@ -139,8 +387,11 @@ app.get(
       );
 
       res.status(500).json({
+
         status: "error",
+
         database: false
+
       });
 
     }
@@ -160,14 +411,23 @@ app.post(
     try {
 
       const {
+
         customer_name,
+
         email,
+
         phone,
+
         event_type,
+
         event_date,
+
         start_time,
+
         location,
+
         message
+
       } = req.body;
 
 
@@ -176,12 +436,19 @@ app.post(
       ========================= */
 
       if (
+
         !customer_name ||
+
         !phone ||
+
         !event_type ||
+
         !event_date ||
+
         !start_time ||
+
         !location
+
       ) {
 
         return res.status(400).json({
@@ -195,7 +462,7 @@ app.post(
 
 
       /* =========================
-         INSERT
+         INSERT BOOKING
       ========================= */
 
       const [result] =
@@ -219,14 +486,23 @@ app.post(
           `,
 
           [
+
             customer_name,
+
             email || null,
+
             phone,
+
             event_type,
+
             event_date,
+
             start_time,
+
             location,
+
             message || null
+
           ]
 
         );
@@ -234,6 +510,42 @@ app.post(
 
       const bookingId =
         result.insertId;
+
+
+      /* =========================
+         SEND ADMIN EMAIL
+      ========================= */
+
+      await sendAdminBookingEmail({
+
+        id:
+          bookingId,
+
+        customer_name:
+          customer_name,
+
+        email:
+          email,
+
+        phone:
+          phone,
+
+        event_type:
+          event_type,
+
+        event_date:
+          event_date,
+
+        start_time:
+          start_time,
+
+        location:
+          location,
+
+        message:
+          message
+
+      });
 
 
       /* =========================
@@ -263,7 +575,6 @@ app.post(
         error
       );
 
-
       res.status(500).json({
 
         success: false,
@@ -289,15 +600,15 @@ app.get(
 
     try {
 
-      const [
-        rows
-      ] =
+      const [rows] =
         await pool.query(
+
           `
           SELECT *
           FROM bookings
           ORDER BY id DESC
           `
+
         );
 
 
@@ -310,7 +621,6 @@ app.get(
         "Get bookings error:",
         error
       );
-
 
       res.status(500).json({
 
@@ -352,9 +662,7 @@ app.post(
       }
 
 
-      const [
-        rows
-      ] =
+      const [rows] =
         await pool.execute(
 
           `
@@ -450,7 +758,6 @@ app.post(
         error
       );
 
-
       res.status(500).json({
 
         message:
@@ -483,8 +790,11 @@ app.patch(
 
 
       if (
+
         status !== "accepted" &&
+
         status !== "rejected"
+
       ) {
 
         return res.status(400).json({
@@ -497,9 +807,7 @@ app.patch(
       }
 
 
-      const [
-        result
-      ] =
+      const [result] =
         await pool.execute(
 
           `
@@ -510,8 +818,11 @@ app.patch(
           `,
 
           [
+
             status,
+
             id
+
           ]
 
         );
@@ -547,7 +858,6 @@ app.patch(
         "Status update error:",
         error
       );
-
 
       res.status(500).json({
 
@@ -593,7 +903,6 @@ app.delete(
         "Clear bookings error:",
         error
       );
-
 
       res.status(500).json({
 

@@ -112,37 +112,6 @@ function formatTime(time) {
 }
 
 
-function isGoogleMapsLink(value) {
-
-  if (!value) {
-    return false;
-  }
-
-  try {
-
-    const url =
-      new URL(value);
-
-    const host =
-      url.hostname.toLowerCase();
-
-    return (
-      host === "google.com" ||
-      host === "www.google.com" ||
-      host === "maps.google.com" ||
-      host === "maps.app.goo.gl" ||
-      host === "goo.gl"
-    );
-
-  } catch (error) {
-
-    return false;
-
-  }
-
-}
-
-
 /* =========================
    HEALTH
 ========================= */
@@ -198,8 +167,7 @@ app.post(
         event_date,
         start_time,
         location,
-        message,
-        google_maps_link
+        message
       } = req.body;
 
 
@@ -213,27 +181,14 @@ app.post(
         !event_type ||
         !event_date ||
         !start_time ||
-        !location ||
-        !google_maps_link
+        !location
       ) {
 
         return res.status(400).json({
+
           message:
             "Please complete all required booking fields."
-        });
 
-      }
-
-
-      if (
-        !isGoogleMapsLink(
-          google_maps_link
-        )
-      ) {
-
-        return res.status(400).json({
-          message:
-            "Invalid Google Maps location."
         });
 
       }
@@ -256,12 +211,11 @@ app.post(
             event_date,
             start_time,
             location,
-            google_maps_link,
             message,
             status
           )
           VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+          (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
           `,
 
           [
@@ -272,7 +226,6 @@ app.post(
             event_date,
             start_time,
             location,
-            google_maps_link,
             message || null
           ]
 
@@ -414,7 +367,6 @@ app.post(
             event_date,
             start_time,
             location,
-            google_maps_link,
             message,
             status,
             created_at
@@ -476,9 +428,6 @@ app.post(
 
           location:
             booking.location,
-
-          google_maps_link:
-            booking.google_maps_link,
 
           message:
             booking.message,

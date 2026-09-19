@@ -7,6 +7,283 @@
     <title>Book Chende - Shri Mahaganapathi Chende Balaga</title>
 
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ==============================
+           BOOKING FORM FIX
+        ============================== */
+
+        .booking-section {
+            min-height: 100vh;
+            padding: 140px 20px 80px;
+        }
+
+        .booking-section .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-heading .section-tag {
+            display: block;
+            margin-bottom: 12px;
+            color: #c58b3a;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .section-heading h1 {
+            margin: 0 0 15px;
+            font-size: clamp(40px, 6vw, 70px);
+            line-height: 1.1;
+        }
+
+        .section-heading p {
+            margin: 0;
+            opacity: 0.75;
+        }
+
+        .booking-card {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        #bookingForm.form {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 22px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 35px !important;
+            background: #17120e !important;
+            border: 1px solid #a87b43 !important;
+            border-radius: 22px !important;
+            box-sizing: border-box !important;
+        }
+
+        #bookingForm.form label {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            color: #eadbc8 !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            letter-spacing: 1.2px !important;
+            line-height: 1.5 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            overflow: visible !important;
+        }
+
+        #bookingForm.form label > input,
+        #bookingForm.form label > select,
+        #bookingForm.form label > textarea {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            width: 100% !important;
+            height: 52px !important;
+            min-height: 52px !important;
+            max-height: none !important;
+            margin: 9px 0 0 0 !important;
+            padding: 13px 15px !important;
+            box-sizing: border-box !important;
+            background: #ffffff !important;
+            color: #18130e !important;
+            border: 1px solid #c7b79f !important;
+            border-radius: 9px !important;
+            outline: none !important;
+            transform: none !important;
+            clip: auto !important;
+            clip-path: none !important;
+            overflow: visible !important;
+            font-size: 15px !important;
+            font-family: Arial, sans-serif !important;
+            z-index: 50 !important;
+        }
+
+        #bookingForm.form label > textarea {
+            height: 120px !important;
+            min-height: 120px !important;
+            resize: vertical !important;
+        }
+
+        #bookingForm.form label > select {
+            appearance: auto !important;
+            -webkit-appearance: auto !important;
+            cursor: pointer !important;
+        }
+
+        #bookingForm.form input[type="date"],
+        #bookingForm.form input[type="time"] {
+            color-scheme: light !important;
+        }
+
+        #bookingForm.form input::placeholder,
+        #bookingForm.form textarea::placeholder {
+            color: #777777 !important;
+            opacity: 1 !important;
+        }
+
+        #bookingForm.form input:focus,
+        #bookingForm.form select:focus,
+        #bookingForm.form textarea:focus {
+            border-color: #c18435 !important;
+            box-shadow: 0 0 0 3px rgba(193, 132, 53, 0.18) !important;
+        }
+
+        .optional {
+            color: #c58b3a !important;
+            font-size: 9px !important;
+        }
+
+        .location-control {
+            display: block !important;
+            width: 100% !important;
+        }
+
+        #bookingForm #location {
+            display: block !important;
+            width: 100% !important;
+            height: 52px !important;
+            min-height: 52px !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .location-button {
+            display: block !important;
+            width: 100% !important;
+            min-height: 45px !important;
+            margin-top: 9px !important;
+            padding: 10px 15px !important;
+            border: 1px solid #b77b31 !important;
+            border-radius: 8px !important;
+            background: #241a12 !important;
+            color: #e2ad5d !important;
+            cursor: pointer !important;
+            font-weight: 700 !important;
+        }
+
+        .location-button:hover {
+            background: #b77b31 !important;
+            color: #ffffff !important;
+        }
+
+        #locationStatus {
+            display: block !important;
+            margin-top: 7px !important;
+            font-size: 9px !important;
+            color: #a99988 !important;
+        }
+
+        #googleMapsLink {
+            display: none !important;
+        }
+
+        #locationMapBox {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 12px;
+            border: 1px solid #73542f;
+            border-radius: 9px;
+        }
+
+        .location-success {
+            color: #75d18d;
+            margin-bottom: 7px;
+        }
+
+        .text-link {
+            color: #d7a04e;
+        }
+
+        #bookingForm .submit-button {
+            grid-column: 1 / -1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            min-height: 54px !important;
+            margin-top: 4px !important;
+            padding: 14px 20px !important;
+            border: 0 !important;
+            border-radius: 10px !important;
+            background: linear-gradient(110deg, #b77a2c, #d9a34f) !important;
+            color: #ffffff !important;
+            cursor: pointer !important;
+            font-size: 15px !important;
+            font-weight: 800 !important;
+        }
+
+        #bookingForm .submit-button:hover {
+            transform: translateY(-2px);
+        }
+
+        #bookingMsg {
+            grid-column: 1 / -1 !important;
+            display: block !important;
+            min-height: 22px !important;
+            color: #ffffff !important;
+            font-size: 12px !important;
+        }
+
+        #bookingServiceStatus {
+            grid-column: 1 / -1 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-height: 20px !important;
+            color: #78ce8b !important;
+            font-size: 10px !important;
+        }
+
+        #bookingServiceStatus .dot {
+            display: inline-block !important;
+            width: 8px !important;
+            height: 8px !important;
+            min-width: 8px !important;
+            border-radius: 50% !important;
+            background: #78ce8b !important;
+            box-shadow: 0 0 12px #78ce8b !important;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+            .booking-section {
+                padding: 110px 15px 60px;
+            }
+
+            #bookingForm.form {
+                grid-template-columns: 1fr !important;
+                padding: 22px !important;
+                gap: 18px !important;
+            }
+
+            #bookingForm.form label {
+                grid-column: 1 !important;
+            }
+
+            #bookingForm .submit-button,
+            #bookingMsg,
+            #bookingServiceStatus {
+                grid-column: 1 !important;
+            }
+
+            .section-heading h1 {
+                font-size: 42px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -26,7 +303,12 @@
             Shri Mahaganapathi Chende Balaga
         </a>
 
-        <button class="menu-toggle" id="menuToggle" type="button">
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Open menu"
+        >
             ☰
         </button>
 
@@ -39,7 +321,12 @@
             <a href="booking.html" class="active">Book Now</a>
         </nav>
 
-        <button id="themeToggle" class="theme-toggle" type="button">
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+        >
             ◐
         </button>
 
@@ -71,7 +358,11 @@
 
             <div class="booking-card">
 
-                <form id="bookingForm" class="form">
+                <form
+                    id="bookingForm"
+                    class="form"
+                    autocomplete="on"
+                >
 
                     <label>
                         Full Name
@@ -112,8 +403,11 @@
                     <label>
                         Event Type
 
-                        <select name="event_type" required>
-                            <option value="">Select</option>
+                        <select
+                            name="event_type"
+                            required
+                        >
+                            <option value="">Select Event Type</option>
                             <option value="Wedding">Wedding</option>
                             <option value="Bhajan">Bhajan</option>
                             <option value="Procession">Procession</option>
@@ -144,8 +438,7 @@
                         >
                     </label>
 
-                    <label>
-
+                    <label style="grid-column: 1 / -1;">
                         Venue / Location
 
                         <div class="location-control">
@@ -169,10 +462,7 @@
 
                         </div>
 
-                        <small
-                            id="locationStatus"
-                            class="muted"
-                        >
+                        <small id="locationStatus">
                             Click "Detect My Location" and allow location access.
                         </small>
 
@@ -187,7 +477,6 @@
                     <div
                         id="locationMapBox"
                         class="location-map-box"
-                        style="display:none;"
                     >
 
                         <div class="location-success">
@@ -206,7 +495,7 @@
 
                     </div>
 
-                    <label>
+                    <label style="grid-column: 1 / -1;">
 
                         Additional Requirements
 

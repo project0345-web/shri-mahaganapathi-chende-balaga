@@ -1,789 +1,479 @@
-document.addEventListener("DOMContentLoaded", function () {
+const API = "https://shri-mahaganapathi-chende-balaga.onrender.com/api";
 
-    const API = "https://shri-mahaganapathi-chende-balaga.onrender.com/api";
+const loader = document.getElementById("loader");
+const menuBtn = document.getElementById("menuBtn");
+const nav = document.getElementById("nav");
+const themeBtn = document.getElementById("themeBtn");
+const langBtn = document.getElementById("langBtn");
+const bookingForm = document.getElementById("bookingForm");
+const bookingMsg = document.getElementById("bookingMsg");
+const bookingSubmit = document.getElementById("bookingSubmit");
+const bookingServiceStatus = document.getElementById("bookingServiceStatus");
 
-    /* =========================
-       LOADER
-    ========================= */
-
-    const loader = document.getElementById("loader");
-
-    function hideLoader() {
-        if (loader) {
-            loader.classList.add("hidden");
-        }
+function hideLoader() {
+    if (loader) {
+        loader.classList.add("hidden");
     }
+}
 
-    window.addEventListener("load", function () {
-        setTimeout(hideLoader, 500);
+window.addEventListener("load", function () {
+    setTimeout(hideLoader, 500);
+});
+
+setTimeout(hideLoader, 3000);
+
+if (menuBtn && nav) {
+    menuBtn.addEventListener("click", function () {
+        nav.classList.toggle("active");
     });
 
-    /* Fallback so the website never remains stuck */
-    setTimeout(hideLoader, 3000);
-
-
-    /* =========================
-       MOBILE MENU
-    ========================= */
-
-    const menuBtn = document.getElementById("menuBtn");
-    const nav = document.getElementById("nav");
-
-    if (menuBtn && nav) {
-        menuBtn.addEventListener("click", function () {
-            nav.classList.toggle("active");
-            menuBtn.classList.toggle("active");
+    nav.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            nav.classList.remove("active");
         });
-
-        nav.querySelectorAll("a").forEach(function (link) {
-            link.addEventListener("click", function () {
-                nav.classList.remove("active");
-                menuBtn.classList.remove("active");
-            });
-        });
-    }
-
-
-    /* =========================
-       THEME
-    ========================= */
-
-    const themeBtn = document.getElementById("themeBtn");
-
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark");
-    }
-
-    if (themeBtn) {
-        themeBtn.addEventListener("click", function () {
-
-            document.body.classList.toggle("dark");
-
-            const isDark =
-                document.body.classList.contains("dark");
-
-            localStorage.setItem(
-                "theme",
-                isDark ? "dark" : "light"
-            );
-
-            themeBtn.textContent = isDark ? "☀" : "☼";
-        });
-    }
-
-
-    /* =========================
-       REVEAL ANIMATIONS
-    ========================= */
-
-    const revealElements =
-        document.querySelectorAll(".reveal");
-
-    if ("IntersectionObserver" in window) {
-
-        const revealObserver =
-            new IntersectionObserver(
-                function (entries, observer) {
-
-                    entries.forEach(function (entry) {
-
-                        if (entry.isIntersecting) {
-
-                            entry.target.classList.add("visible");
-
-                            observer.unobserve(entry.target);
-                        }
-
-                    });
-
-                },
-                {
-                    threshold: 0.12
-                }
-            );
-
-        revealElements.forEach(function (element) {
-            revealObserver.observe(element);
-        });
-
-    } else {
-
-        revealElements.forEach(function (element) {
-            element.classList.add("visible");
-        });
-
-    }
-
-
-    /* =========================
-       EVENT DATE
-    ========================= */
-
-    const eventDate =
-        document.querySelector('input[name="event_date"]');
-
-    if (eventDate) {
-
-        const today = new Date();
-
-        const year = today.getFullYear();
-
-        const month =
-            String(today.getMonth() + 1).padStart(2, "0");
-
-        const day =
-            String(today.getDate()).padStart(2, "0");
-
-        eventDate.min =
-            `${year}-${month}-${day}`;
-    }
-
-
-    /* =========================
-       LANGUAGE
-    ========================= */
-
-    const langBtn =
-        document.getElementById("langBtn");
-
-    let kannada = false;
-
-    const translations = {
-
-        navHome: ["Home", "ಮುಖಪುಟ"],
-        navAbout: ["About", "ನಮ್ಮ ಬಗ್ಗೆ"],
-        navServices: ["Services", "ಸೇವೆಗಳು"],
-        navTeam: ["Team", "ತಂಡ"],
-        navGallery: ["Gallery", "ಗ್ಯಾಲರಿ"],
-        navBooking: ["Booking", "ಬುಕಿಂಗ್"],
-        navStatus: ["Check Status", "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ"],
-        navContact: ["Contact", "ಸಂಪರ್ಕ"],
-        bookNow: ["Book Now", "ಈಗ ಬುಕ್ ಮಾಡಿ"],
-
-        heroEyebrow: [
-            "TRADITION • DEVOTION • RHYTHM",
-            "ಸಂಪ್ರದಾಯ • ಭಕ್ತಿ • ಲಯ"
-        ],
-
-        heroTitle: [
-            "Feel the power of the Chende.",
-            "ಚೆಂಡೆಯ ಶಕ್ತಿಯನ್ನು ಅನುಭವಿಸಿ."
-        ],
-
-        heroText: [
-            "Experience the vibrant rhythm of Shri Mahaganapathi Chende Balaga, Mudradi for weddings, bhajans, processions, temple events and auspicious occasions.",
-            "ಮದುವೆಗಳು, ಭಜನೆಗಳು, ಮೆರವಣಿಗೆಗಳು, ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಶುಭ ಸಮಾರಂಭಗಳಿಗಾಗಿ ಶ್ರೀ ಮಹಾಗಣಪತಿ ಚೆಂಡೆ ಬಳಗ ಮುನಿಯಾಲಿನ ಅದ್ಭುತ ಲಯವನ್ನು ಅನುಭವಿಸಿ."
-        ],
-
-        heroBook: [
-            "Book Our Balaga ↗",
-            "ನಮ್ಮ ಬಳಗವನ್ನು ಬುಕ್ ಮಾಡಿ ↗"
-        ],
-
-        heroTeam: [
-            "Meet the Team",
-            "ತಂಡವನ್ನು ಭೇಟಿ ಮಾಡಿ"
-        ],
-
-        statPerformers: ["Performers", "ಕಲಾವಿದರು"],
-        statPrograms: ["Programs", "ಕಾರ್ಯಕ್ರಮಗಳು"],
-        statTradition: ["Tradition", "ಸಂಪ್ರದಾಯ"],
-
-        labelStory: ["OUR STORY", "ನಮ್ಮ ಕಥೆ"],
-        aboutEyebrow: ["ROOTED IN TRADITION", "ಸಂಪ್ರದಾಯದಲ್ಲಿ ಬೇರೂರಿದೆ"],
-        aboutTitle: [
-            "A rhythm that brings people together.",
-            "ಜನರನ್ನು ಒಗ್ಗೂಡಿಸುವ ಲಯ."
-        ],
-
-        aboutP1: [
-            "Shri Mahaganapathi Chende Balaga, Mudradi carries the vibrant tradition of Chende performance into modern celebrations while respecting the spirit and culture behind every beat.",
-            "ಶ್ರೀ ಮಹಾಗಣಪತಿ ಚೆಂಡೆ ಬಳಗ, ಮುನಿಯಾಲು ಪ್ರತಿಯೊಂದು ಲಯದ ಹಿಂದಿರುವ ಸಂಸ್ಕೃತಿ ಮತ್ತು ಸಂಪ್ರದಾಯವನ್ನು ಗೌರವಿಸುತ್ತಾ ಚೆಂಡೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಕಲೆಯನ್ನು ಇಂದಿನ ಆಚರಣೆಗಳಿಗೆ ತರುತ್ತದೆ."
-        ],
-
-        aboutP2: [
-            "From sacred temple occasions to joyful weddings and processions, our team brings disciplined rhythm, energy and a memorable traditional atmosphere.",
-            "ದೇವಸ್ಥಾನದ ಪವಿತ್ರ ಕಾರ್ಯಕ್ರಮಗಳಿಂದ ಮದುವೆಗಳು ಮತ್ತು ಮೆರವಣಿಗೆಗಳವರೆಗೆ ನಮ್ಮ ತಂಡ ಶಿಸ್ತುಬದ್ಧ ಲಯ, ಉತ್ಸಾಹ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ವಾತಾವರಣವನ್ನು ನೀಡುತ್ತದೆ."
-        ],
-
-        aboutLink: [
-            "Plan a performance →",
-            "ಕಾರ್ಯಕ್ರಮವನ್ನು ಯೋಜಿಸಿ →"
-        ],
-
-        labelOccasions: ["OCCASIONS", "ಸಂದರ್ಭಗಳು"],
-        servicesEyebrow: ["PERFORM WITH US", "ನಮ್ಮೊಂದಿಗೆ ಕಾರ್ಯಕ್ರಮ ನೀಡಿ"],
-        servicesTitle: [
-            "Made for your special moment.",
-            "ನಿಮ್ಮ ವಿಶೇಷ ಕ್ಷಣಕ್ಕಾಗಿ."
-        ],
-
-        servicesText: [
-            "Choose a traditional Chende performance that matches the scale and spirit of your occasion.",
-            "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ಸ್ವರೂಪ ಮತ್ತು ಉತ್ಸಾಹಕ್ಕೆ ಹೊಂದುವ ಸಾಂಪ್ರದಾಯಿಕ ಚೆಂಡೆ ಕಾರ್ಯಕ್ರಮವನ್ನು ಆಯ್ಕೆಮಾಡಿ."
-        ],
-
-        wedding: ["Weddings", "ಮದುವೆಗಳು"],
-        temple: ["Temple Events", "ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು"],
-        procession: ["Processions", "ಮೆರವಣಿಗೆಗಳು"],
-        bhajan: ["Bhajans & Culture", "ಭಜನೆಗಳು ಮತ್ತು ಸಂಸ್ಕೃತಿ"],
-
-        weddingText: [
-            "Grand Chende performances for entrances, processions and wedding celebrations.",
-            "ಮದುವೆಯ ಪ್ರವೇಶ, ಮೆರವಣಿಗೆ ಮತ್ತು ಸಂಭ್ರಮಕ್ಕಾಗಿ ಅದ್ಧೂರಿ ಚೆಂಡೆ ಕಾರ್ಯಕ್ರಮಗಳು."
-        ],
-
-        templeText: [
-            "Traditional performances for temple programs, festivals and auspicious occasions.",
-            "ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು, ಹಬ್ಬಗಳು ಮತ್ತು ಶುಭ ಸಮಾರಂಭಗಳಿಗಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಕಾರ್ಯಕ್ರಮಗಳು."
-        ],
-
-        processionText: [
-            "High-energy rhythm for processions, community celebrations and public events.",
-            "ಮೆರವಣಿಗೆಗಳು, ಸಮುದಾಯದ ಆಚರಣೆಗಳು ಮತ್ತು ಸಾರ್ವಜನಿಕ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಉತ್ಸಾಹಭರಿತ ಲಯ."
-        ],
-
-        bhajanText: [
-            "Rhythm support for bhajans, cultural programs and local celebrations.",
-            "ಭಜನೆಗಳು, ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಸ್ಥಳೀಯ ಆಚರಣೆಗಳಿಗೆ ಲಯದ ಸಹಕಾರ."
-        ],
-
-        teamTitle: [
-            "One team. One rhythm.",
-            "ಒಂದು ತಂಡ. ಒಂದು ಲಯ."
-        ],
-
-        teamText: [
-            "Our performers bring discipline, tradition and collective energy. The sound is powerful because the team moves as one.",
-            "ನಮ್ಮ ಕಲಾವಿದರು ಶಿಸ್ತು, ಸಂಪ್ರದಾಯ ಮತ್ತು ಸಾಮೂಹಿಕ ಶಕ್ತಿಯನ್ನು ತರುತ್ತಾರೆ. ತಂಡವು ಒಂದಾಗಿ ಸಾಗುವುದರಿಂದ ಧ್ವನಿ ಇನ್ನಷ್ಟು ಶಕ್ತಿಯುತವಾಗಿರುತ್ತದೆ."
-        ],
-
-        teamBook: [
-            "Request Booking ↗",
-            "ಬುಕಿಂಗ್ ವಿನಂತಿಸಿ ↗"
-        ],
-
-        labelGallery: ["VISUALS", "ಚಿತ್ರಗಳು"],
-        galleryEyebrow: ["THE SOUND HAS A LOOK", "ಲಯಕ್ಕೂ ಒಂದು ರೂಪವಿದೆ"],
-        galleryTitle: [
-            "Tradition in every frame.",
-            "ಪ್ರತಿಯೊಂದು ಚಿತ್ರದಲ್ಲೂ ಸಂಪ್ರದಾಯ."
-        ],
-
-        labelBooking: ["BOOKING", "ಬುಕಿಂಗ್"],
-        bookingEyebrow: ["MAKE YOUR DATE SPECIAL", "ನಿಮ್ಮ ದಿನವನ್ನು ವಿಶೇಷವಾಗಿಸಿ"],
-        bookingTitle: [
-            "Book the Balaga.",
-            "ಬಳಗವನ್ನು ಬುಕ್ ಮಾಡಿ."
-        ],
-
-        bookingText: [
-            "Send your event details and submit a booking request. Our team will contact you to confirm the Chende booking.",
-            "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ವಿವರಗಳನ್ನು ಕಳುಹಿಸಿ. ಚೆಂಡೆ ಬುಕಿಂಗ್ ಖಚಿತಪಡಿಸಲು ನಮ್ಮ ತಂಡ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತದೆ."
-        ],
-
-        nameLabel: ["Full Name", "ಪೂರ್ಣ ಹೆಸರು"],
-        phoneLabel: ["Phone", "ದೂರವಾಣಿ"],
-        emailLabel: ["Email", "ಇಮೇಲ್"],
-        eventLabel: ["Event Type", "ಕಾರ್ಯಕ್ರಮದ ಪ್ರಕಾರ"],
-        dateLabel: ["Event Date", "ಕಾರ್ಯಕ್ರಮದ ದಿನಾಂಕ"],
-        timeLabel: ["Start Time", "ಪ್ರಾರಂಭದ ಸಮಯ"],
-        locationLabel: ["Venue / Location", "ಸ್ಥಳ"],
-        messageLabel: ["Additional Requirements", "ಹೆಚ್ಚುವರಿ ಅವಶ್ಯಕತೆಗಳು"],
-
-        submitBooking: [
-            "Submit Booking Request ↗",
-            "ಬುಕಿಂಗ್ ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಸಿ ↗"
-        ],
-
-        quote: [
-            "Where words end, rhythm begins.",
-            "ಮಾತುಗಳು ಕೊನೆಗೊಳ್ಳುವಲ್ಲಿ ಲಯ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ."
-        ],
-
-        labelContact: ["CONTACT", "ಸಂಪರ್ಕ"],
-        contactEyebrow: ["LET'S TALK", "ಮಾತನಾಡೋಣ"],
-        contactTitle: [
-            "Bring the Chende to your occasion.",
-            "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮಕ್ಕೆ ಚೆಂಡೆಯನ್ನು ತನ್ನಿ."
-        ],
-
-        contactText: [
-            "Call, WhatsApp or email us for availability and booking details.",
-            "ಲಭ್ಯತೆ ಮತ್ತು ಬುಕಿಂಗ್ ವಿವರಗಳಿಗಾಗಿ ಕರೆ ಮಾಡಿ, WhatsApp ಅಥವಾ ಇಮೇಲ್ ಮೂಲಕ ಸಂಪರ್ಕಿಸಿ."
-        ]
-    };
-
-
-    function updateLanguage() {
-
-        document
-            .querySelectorAll("[data-i18n]")
-            .forEach(function (element) {
-
-                const key =
-                    element.getAttribute("data-i18n");
-
-                if (!translations[key]) {
-                    return;
-                }
-
-                element.textContent =
-                    translations[key][kannada ? 1 : 0];
-            });
-
-        if (langBtn) {
-            langBtn.textContent =
-                kannada ? "English" : "ಕನ್ನಡ";
+    });
+}
+
+const savedTheme = localStorage.getItem("chendeTheme");
+
+if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+}
+
+if (themeBtn) {
+    themeBtn.addEventListener("click", function () {
+        document.body.classList.toggle("dark");
+
+        if (document.body.classList.contains("dark")) {
+            localStorage.setItem("chendeTheme", "dark");
+        } else {
+            localStorage.setItem("chendeTheme", "light");
         }
-    }
+    });
+}
 
+const revealElements = document.querySelectorAll(".reveal");
+
+if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+        function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("show");
+                    entry.target.classList.remove("animate-hidden");
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            threshold: 0.12
+        }
+    );
+
+    revealElements.forEach(function (element) {
+        revealObserver.observe(element);
+    });
+} else {
+    revealElements.forEach(function (element) {
+        element.classList.add("show");
+    });
+}
+
+const dateInput = document.querySelector('input[name="event_date"]');
+
+if (dateInput) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    dateInput.min = `${year}-${month}-${day}`;
+}
+
+const translations = {
+    en: {
+        navHome: "Home",
+        navAbout: "About",
+        navServices: "Services",
+        navTeam: "Team",
+        navGallery: "Gallery",
+        navBooking: "Booking",
+        navStatus: "Check Status",
+        navContact: "Contact",
+        bookNow: "Book Now",
+
+        heroEyebrow: "TRADITION • DEVOTION • RHYTHM",
+        heroTitle: "Feel the power of the Chende.",
+        heroText: "Experience the vibrant rhythm of Shri Mahaganapathi Chende Balaga, Mudradi for weddings, bhajans, processions, temple events and auspicious occasions.",
+        heroBook: "Book Our Balaga",
+        heroTeam: "Meet the Team",
+        statPerformers: "Performers",
+        statPrograms: "Programs",
+        statTradition: "Tradition",
+
+        labelStory: "OUR STORY",
+        aboutEyebrow: "ROOTED IN TRADITION",
+        aboutTitle: "A rhythm that brings people together.",
+        aboutP1: "Shri Mahaganapathi Chende Balaga, Mudradi carries the vibrant tradition of Chende performance into modern celebrations while respecting the spirit and culture behind every beat.",
+        aboutP2: "From sacred temple occasions to joyful weddings and processions, our team brings disciplined rhythm, energy and a memorable traditional atmosphere.",
+        aboutLink: "Plan a performance →",
+
+        labelOccasions: "OCCASIONS",
+        servicesEyebrow: "PERFORM WITH US",
+        servicesTitle: "Made for your special moment.",
+        servicesText: "Choose a traditional Chende performance that matches the scale and spirit of your occasion.",
+        wedding: "Weddings",
+        weddingText: "Grand Chende performances for entrances, processions and wedding celebrations.",
+        temple: "Temple Events",
+        templeText: "Traditional performances for temple programs, festivals and auspicious occasions.",
+        procession: "Processions",
+        processionText: "High-energy rhythm for processions, community celebrations and public events.",
+        bhajan: "Bhajans & Culture",
+        bhajanText: "Rhythm support for bhajans, cultural programs and local celebrations.",
+
+        teamTitle: "One team. One rhythm.",
+        teamText: "Our performers bring discipline, tradition and collective energy. The sound is powerful because the team moves as one.",
+        teamBook: "Request Booking",
+
+        labelGallery: "VISUALS",
+        galleryEyebrow: "THE SOUND HAS A LOOK",
+        galleryTitle: "Tradition in every frame.",
+
+        labelBooking: "BOOKING",
+        bookingEyebrow: "MAKE YOUR DATE SPECIAL",
+        bookingTitle: "Book the Balaga.",
+        bookingText: "Send your event details and submit a booking request. Our team will contact you to confirm the Chende booking.",
+
+        nameLabel: "Full Name",
+        phoneLabel: "Phone",
+        emailLabel: "Email",
+        eventLabel: "Event Type",
+        dateLabel: "Event Date",
+        timeLabel: "Start Time",
+        locationLabel: "Venue / Location",
+        messageLabel: "Additional Requirements",
+        submitBooking: "Submit Booking Request",
+
+        quote: "Where words end, rhythm begins.",
+
+        labelContact: "CONTACT",
+        contactEyebrow: "LET'S TALK",
+        contactTitle: "Bring the Chende to your occasion.",
+        contactText: "Call, WhatsApp or email us for availability and booking details."
+    },
+
+    kn: {
+        navHome: "ಮುಖಪುಟ",
+        navAbout: "ನಮ್ಮ ಬಗ್ಗೆ",
+        navServices: "ಸೇವೆಗಳು",
+        navTeam: "ತಂಡ",
+        navGallery: "ಗ್ಯಾಲರಿ",
+        navBooking: "ಬುಕಿಂಗ್",
+        navStatus: "ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಿ",
+        navContact: "ಸಂಪರ್ಕ",
+        bookNow: "ಈಗ ಬುಕ್ ಮಾಡಿ",
+
+        heroEyebrow: "ಸಂಪ್ರದಾಯ • ಭಕ್ತಿ • ಲಯ",
+        heroTitle: "ಚೆಂಡೆಯ ಶಕ್ತಿಯನ್ನು ಅನುಭವಿಸಿ.",
+        heroText: "ಮದುವೆ, ಭಜನೆ, ಮೆರವಣಿಗೆ, ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಶುಭ ಸಮಾರಂಭಗಳಿಗಾಗಿ ಶ್ರೀ ಮಹಾಗಣಪತಿ ಚೆಂಡೆ ಬಳಗ, ಮುಡ್ರಾಡಿಯ ಉತ್ಸಾಹಭರಿತ ಲಯವನ್ನು ಅನುಭವಿಸಿ.",
+        heroBook: "ನಮ್ಮ ಬಳಗವನ್ನು ಬುಕ್ ಮಾಡಿ",
+        heroTeam: "ತಂಡವನ್ನು ನೋಡಿ",
+        statPerformers: "ಕಲಾವಿದರು",
+        statPrograms: "ಕಾರ್ಯಕ್ರಮಗಳು",
+        statTradition: "ಸಂಪ್ರದಾಯ",
+
+        labelStory: "ನಮ್ಮ ಕಥೆ",
+        aboutEyebrow: "ಸಂಪ್ರದಾಯದಲ್ಲಿ ಬೇರೂರಿದೆ",
+        aboutTitle: "ಜನರನ್ನು ಒಂದಾಗಿಸುವ ಲಯ.",
+        aboutP1: "ಶ್ರೀ ಮಹಾಗಣಪತಿ ಚೆಂಡೆ ಬಳಗ, ಮುಡ್ರಾಡಿ ಪ್ರತಿಯೊಂದು ಲಯದ ಹಿಂದಿರುವ ಸಂಸ್ಕೃತಿ ಮತ್ತು ಸಂಪ್ರದಾಯವನ್ನು ಗೌರವಿಸುತ್ತಾ ಚೆಂಡೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಕಲೆಯನ್ನು ಆಧುನಿಕ ಆಚರಣೆಗಳಿಗೆ ತರುತ್ತದೆ.",
+        aboutP2: "ದೇವಸ್ಥಾನದ ಪವಿತ್ರ ಕಾರ್ಯಕ್ರಮಗಳಿಂದ ಸಂತೋಷದ ಮದುವೆಗಳು ಮತ್ತು ಮೆರವಣಿಗೆಗಳವರೆಗೆ ನಮ್ಮ ತಂಡ ಶಿಸ್ತುಬದ್ಧ ಲಯ, ಉತ್ಸಾಹ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ವಾತಾವರಣವನ್ನು ನೀಡುತ್ತದೆ.",
+        aboutLink: "ಕಾರ್ಯಕ್ರಮವನ್ನು ಯೋಜಿಸಿ →",
+
+        labelOccasions: "ಕಾರ್ಯಕ್ರಮಗಳು",
+        servicesEyebrow: "ನಮ್ಮೊಂದಿಗೆ ಪ್ರದರ್ಶನ ನೀಡಿ",
+        servicesTitle: "ನಿಮ್ಮ ವಿಶೇಷ ಸಂದರ್ಭಕ್ಕಾಗಿ.",
+        servicesText: "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ಪ್ರಮಾಣ ಮತ್ತು ಉದ್ದೇಶಕ್ಕೆ ಹೊಂದುವ ಸಾಂಪ್ರದಾಯಿಕ ಚೆಂಡೆ ಪ್ರದರ್ಶನವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+        wedding: "ಮದುವೆಗಳು",
+        weddingText: "ಮದುವೆಯ ಪ್ರವೇಶ, ಮೆರವಣಿಗೆ ಮತ್ತು ಸಂಭ್ರಮಕ್ಕಾಗಿ ಅದ್ಧೂರಿ ಚೆಂಡೆ ಪ್ರದರ್ಶನಗಳು.",
+        temple: "ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು",
+        templeText: "ದೇವಸ್ಥಾನ ಕಾರ್ಯಕ್ರಮಗಳು, ಹಬ್ಬಗಳು ಮತ್ತು ಶುಭ ಸಮಾರಂಭಗಳಿಗಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಪ್ರದರ್ಶನಗಳು.",
+        procession: "ಮೆರವಣಿಗೆಗಳು",
+        processionText: "ಮೆರವಣಿಗೆಗಳು, ಸಮುದಾಯದ ಸಂಭ್ರಮಗಳು ಮತ್ತು ಸಾರ್ವಜನಿಕ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಉತ್ಸಾಹಭರಿತ ಲಯ.",
+        bhajan: "ಭಜನೆ ಮತ್ತು ಸಂಸ್ಕೃತಿ",
+        bhajanText: "ಭಜನೆಗಳು, ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಸ್ಥಳೀಯ ಆಚರಣೆಗಳಿಗೆ ಲಯದ ಸಹಕಾರ.",
+
+        teamTitle: "ಒಂದು ತಂಡ. ಒಂದು ಲಯ.",
+        teamText: "ನಮ್ಮ ಕಲಾವಿದರು ಶಿಸ್ತು, ಸಂಪ್ರದಾಯ ಮತ್ತು ಒಗ್ಗಟ್ಟಿನ ಉತ್ಸಾಹವನ್ನು ತರುತ್ತಾರೆ. ತಂಡವು ಒಂದಾಗಿ ಸಾಗುವುದರಿಂದ ಧ್ವನಿ ಶಕ್ತಿಯುತವಾಗಿರುತ್ತದೆ.",
+        teamBook: "ಬುಕಿಂಗ್ ವಿನಂತಿಸಿ",
+
+        labelGallery: "ಚಿತ್ರಗಳು",
+        galleryEyebrow: "ಧ್ವನಿಗೂ ಒಂದು ರೂಪವಿದೆ",
+        galleryTitle: "ಪ್ರತಿಯೊಂದು ಚಿತ್ರದಲ್ಲೂ ಸಂಪ್ರದಾಯ.",
+
+        labelBooking: "ಬುಕಿಂಗ್",
+        bookingEyebrow: "ನಿಮ್ಮ ದಿನವನ್ನು ವಿಶೇಷವಾಗಿಸಿ",
+        bookingTitle: "ಬಳಗವನ್ನು ಬುಕ್ ಮಾಡಿ.",
+        bookingText: "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮದ ವಿವರಗಳನ್ನು ಕಳುಹಿಸಿ ಮತ್ತು ಬುಕಿಂಗ್ ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಸಿ. ಚೆಂಡೆ ಬುಕಿಂಗ್ ದೃಢೀಕರಿಸಲು ನಮ್ಮ ತಂಡ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
+
+        nameLabel: "ಪೂರ್ಣ ಹೆಸರು",
+        phoneLabel: "ದೂರವಾಣಿ",
+        emailLabel: "ಇಮೇಲ್",
+        eventLabel: "ಕಾರ್ಯಕ್ರಮದ ವಿಧ",
+        dateLabel: "ಕಾರ್ಯಕ್ರಮದ ದಿನಾಂಕ",
+        timeLabel: "ಆರಂಭದ ಸಮಯ",
+        locationLabel: "ಸ್ಥಳ",
+        messageLabel: "ಹೆಚ್ಚುವರಿ ಅಗತ್ಯಗಳು",
+        submitBooking: "ಬುಕಿಂಗ್ ವಿನಂತಿ ಸಲ್ಲಿಸಿ",
+
+        quote: "ಮಾತುಗಳು ಮುಗಿದಲ್ಲಿ ಲಯ ಆರಂಭವಾಗುತ್ತದೆ.",
+
+        labelContact: "ಸಂಪರ್ಕ",
+        contactEyebrow: "ಮಾತನಾಡೋಣ",
+        contactTitle: "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮಕ್ಕೆ ಚೆಂಡೆಯನ್ನು ತನ್ನಿ.",
+        contactText: "ಲಭ್ಯತೆ ಮತ್ತು ಬುಕಿಂಗ್ ವಿವರಗಳಿಗಾಗಿ ಕರೆ ಮಾಡಿ, WhatsApp ಅಥವಾ ಇಮೇಲ್ ಮೂಲಕ ಸಂಪರ್ಕಿಸಿ."
+    }
+};
+
+let currentLanguage = localStorage.getItem("chendeLanguage") || "en";
+
+function updateLanguage() {
+    const languageData = translations[currentLanguage];
+
+    document.querySelectorAll("[data-i18n]").forEach(function (element) {
+        const key = element.getAttribute("data-i18n");
+
+        if (languageData[key]) {
+            element.textContent = languageData[key];
+        }
+    });
+
+    document.body.classList.toggle("kn", currentLanguage === "kn");
 
     if (langBtn) {
+        langBtn.textContent = currentLanguage === "en" ? "ಕನ್ನಡ" : "English";
+    }
+}
 
-        langBtn.addEventListener("click", function () {
+if (langBtn) {
+    langBtn.addEventListener("click", function () {
+        currentLanguage = currentLanguage === "en" ? "kn" : "en";
+        localStorage.setItem("chendeLanguage", currentLanguage);
+        updateLanguage();
+    });
+}
 
-            kannada = !kannada;
+updateLanguage();
 
-            updateLanguage();
-
-        });
+async function checkBookingService() {
+    if (!bookingServiceStatus) {
+        return;
     }
 
+    const statusText = bookingServiceStatus.querySelector("span:last-child");
 
-    /* =========================
-       LOCATION DETECTION
-    ========================= */
+    try {
+        const response = await fetch(`${API}/health`);
 
-    const detectLocationBtn =
-        document.getElementById("detectLocationBtn");
+        if (!response.ok) {
+            throw new Error("Service unavailable");
+        }
 
-    const locationInput =
-        document.getElementById("location");
+        bookingServiceStatus.classList.add("online");
 
-    const locationStatus =
-        document.getElementById("locationStatus");
+        if (statusText) {
+            statusText.textContent = "Booking service is available";
+        }
+    } catch (error) {
+        bookingServiceStatus.classList.remove("online");
 
-    const googleMapsLink =
-        document.getElementById("googleMapsLink");
+        if (statusText) {
+            statusText.textContent = "Booking service is currently unavailable";
+        }
+    }
+}
 
-    const openMapLink =
-        document.getElementById("openMapLink");
+checkBookingService();
 
-    const locationMapBox =
-        document.getElementById("locationMapBox");
+if (bookingForm) {
+    bookingForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
+        if (bookingSubmit) {
+            bookingSubmit.disabled = true;
+            bookingSubmit.textContent = "Submitting...";
+        }
 
-    function showLocationMessage(message, success) {
+        if (bookingMsg) {
+            bookingMsg.textContent = "";
+            bookingMsg.className = "";
+        }
 
-        if (!locationStatus) {
+        const formData = new FormData(bookingForm);
+
+        const data = {
+            customer_name: String(formData.get("customer_name") || "").trim(),
+            phone: String(formData.get("phone") || "").trim(),
+            email: String(formData.get("email") || "").trim(),
+            event_type: String(formData.get("event_type") || "").trim(),
+            event_date: String(formData.get("event_date") || "").trim(),
+            start_time: String(formData.get("start_time") || "").trim(),
+            location: String(formData.get("location") || "").trim(),
+            message: String(formData.get("message") || "").trim()
+        };
+
+        if (!data.customer_name) {
+            showBookingMessage("Please enter your name.", "error");
+            resetBookingButton();
             return;
         }
 
-        locationStatus.textContent = message;
-
-        locationStatus.classList.toggle(
-            "success",
-            success
-        );
-    }
-
-
-    function detectLocation() {
-
-        if (!navigator.geolocation) {
-
-            showLocationMessage(
-                "Location detection is not supported by this browser.",
-                false
-            );
-
+        if (!data.phone) {
+            showBookingMessage("Please enter your phone number.", "error");
+            resetBookingButton();
             return;
         }
 
-        if (detectLocationBtn) {
-
-            detectLocationBtn.disabled = true;
-
-            detectLocationBtn.textContent =
-                "📍 Detecting Location...";
+        if (!data.event_type) {
+            showBookingMessage("Please select an event type.", "error");
+            resetBookingButton();
+            return;
         }
 
-        showLocationMessage(
-            "Please allow location access when your browser asks.",
-            false
-        );
+        if (!data.event_date) {
+            showBookingMessage("Please select the event date.", "error");
+            resetBookingButton();
+            return;
+        }
 
+        if (!data.start_time) {
+            showBookingMessage("Please select the start time.", "error");
+            resetBookingButton();
+            return;
+        }
 
-        navigator.geolocation.getCurrentPosition(
-
-            function (position) {
-
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
-                const accuracy =
-                    position.coords.accuracy;
-
-                const mapsUrl =
-                    `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-
-                if (locationInput) {
-
-                    locationInput.value =
-                        `Current Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
-                }
-
-
-                if (googleMapsLink) {
-
-                    googleMapsLink.value =
-                        mapsUrl;
-                }
-
-
-                if (openMapLink) {
-
-                    openMapLink.href =
-                        mapsUrl;
-
-                    openMapLink.style.display =
-                        "inline-flex";
-                }
-
-
-                if (locationMapBox) {
-
-                    locationMapBox.style.display =
-                        "block";
-                }
-
-
-                showLocationMessage(
-                    `Location detected successfully. Accuracy: approximately ${Math.round(accuracy)} metres.`,
-                    true
-                );
-
-
-                if (detectLocationBtn) {
-
-                    detectLocationBtn.disabled = false;
-
-                    detectLocationBtn.textContent =
-                        "✓ Location Detected";
-                }
-
-            },
-
-            function (error) {
-
-                let message =
-                    "Unable to detect your location.";
-
-                if (error.code === 1) {
-
-                    message =
-                        "Location permission was denied. Please allow location access in your browser.";
-
-                } else if (error.code === 2) {
-
-                    message =
-                        "Your location could not be determined. Please try again.";
-
-                } else if (error.code === 3) {
-
-                    message =
-                        "Location detection timed out. Please try again.";
-                }
-
-
-                showLocationMessage(
-                    message,
-                    false
-                );
-
-
-                if (detectLocationBtn) {
-
-                    detectLocationBtn.disabled = false;
-
-                    detectLocationBtn.textContent =
-                        "📍 Detect My Location";
-                }
-
-            },
-
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            }
-        );
-    }
-
-
-    if (detectLocationBtn) {
-
-        detectLocationBtn.addEventListener(
-            "click",
-            detectLocation
-        );
-    }
-
-
-    /* =========================
-       BOOKING SERVICE CHECK
-    ========================= */
-
-    async function checkBookingService() {
-
-        const status =
-            document.getElementById(
-                "bookingServiceStatus"
-            );
-
-        if (!status) {
+        if (!data.location) {
+            showBookingMessage("Please enter the venue or location.", "error");
+            resetBookingButton();
             return;
         }
 
         try {
+            const response = await fetch(`${API}/bookings`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
 
-            const response =
-                await fetch(`${API}/health`);
+            let result = {};
 
-            if (!response.ok) {
-                throw new Error();
+            try {
+                result = await response.json();
+            } catch (error) {
+                result = {};
             }
 
-            status.innerHTML =
-                '<span class="dot"></span><span>Secure booking service online</span>';
+            if (!response.ok) {
+                throw new Error(result.message || "Unable to submit booking.");
+            }
 
-            status.classList.add("online");
+            const bookingId =
+                result.booking_id ||
+                result.id ||
+                result.bookingId ||
+                "";
 
+            let successMessage = "Booking request submitted successfully.";
+
+            if (bookingId) {
+                successMessage += ` Booking ID: ${bookingId}`;
+            }
+
+            showBookingMessage(successMessage, "success");
+
+            bookingForm.reset();
+
+            if (dateInput) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, "0");
+                const day = String(today.getDate()).padStart(2, "0");
+
+                dateInput.min = `${year}-${month}-${day}`;
+            }
+
+            checkBookingService();
         } catch (error) {
-
-            status.innerHTML =
-                '<span class="dot"></span><span>Booking service is currently unavailable</span>';
-
-            status.classList.remove("online");
+            showBookingMessage(
+                error.message || "Something went wrong. Please try again.",
+                "error"
+            );
         }
-    }
 
-    checkBookingService();
+        resetBookingButton();
+    });
+}
 
-
-    /* =========================
-       BOOKING FORM
-    ========================= */
-
-    const bookingForm =
-        document.getElementById("bookingForm");
-
-    if (!bookingForm) {
+function showBookingMessage(message, type) {
+    if (!bookingMsg) {
         return;
     }
 
+    bookingMsg.textContent = message;
+    bookingMsg.className = type;
+}
 
-    bookingForm.addEventListener(
-        "submit",
-        async function (event) {
+function resetBookingButton() {
+    if (bookingSubmit) {
+        bookingSubmit.disabled = false;
+        bookingSubmit.textContent =
+            currentLanguage === "kn"
+                ? "ಬುಕಿಂಗ್ ವಿನಂತಿ ಸಲ್ಲಿಸಿ"
+                : "Submit Booking Request ↗";
+    }
+}
 
-            event.preventDefault();
+const detectLocationBtn = document.getElementById("detectLocationBtn");
+const locationStatus = document.getElementById("locationStatus");
+const locationInput = document.querySelector('input[name="location"]');
 
-            const bookingMsg =
-                document.getElementById("bookingMsg");
-
-            const formData =
-                new FormData(bookingForm);
-
-            const data =
-                Object.fromEntries(formData.entries());
-
-
-            /* VALIDATION */
-
-            if (!data.customer_name ||
-                !data.customer_name.trim()) {
-
-                bookingMsg.textContent =
-                    "Please enter your full name.";
-
-                return;
+if (detectLocationBtn && locationInput) {
+    detectLocationBtn.addEventListener("click", function () {
+        if (!navigator.geolocation) {
+            if (locationStatus) {
+                locationStatus.textContent = "Location is not supported by this browser.";
             }
+            return;
+        }
 
+        if (locationStatus) {
+            locationStatus.textContent = "Detecting your location...";
+        }
 
-            if (!data.phone ||
-                !data.phone.trim()) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
 
-                bookingMsg.textContent =
-                    "Please enter your phone number.";
+                const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-                return;
-            }
-
-
-            if (!data.event_type) {
-
-                bookingMsg.textContent =
-                    "Please select an event type.";
-
-                return;
-            }
-
-
-            if (!data.event_date) {
-
-                bookingMsg.textContent =
-                    "Please select the event date.";
-
-                return;
-            }
-
-
-            if (!data.start_time) {
-
-                bookingMsg.textContent =
-                    "Please select the start time.";
-
-                return;
-            }
-
-
-            if (!data.location ||
-                !data.location.trim()) {
-
-                bookingMsg.textContent =
-                    "Please detect your location before submitting.";
-
-                return;
-            }
-
-
-            /* Google Maps link is required only when
-               the automatic location field exists */
-
-            if (
-                googleMapsLink &&
-                !data.google_maps_link
-            ) {
-
-                bookingMsg.textContent =
-                    "Please detect your location before submitting.";
-
-                return;
-            }
-
-
-            const submitButton =
-                bookingForm.querySelector(
-                    'button[type="submit"]'
-                );
-
-            submitButton.disabled = true;
-
-            submitButton.textContent =
-                "Submitting...";
-
-            bookingMsg.textContent =
-                "Submitting your booking request...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API}/bookings`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body:
-                                JSON.stringify(data)
-                        }
-                    );
-
-
-                const result =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        result.message ||
-                        "Booking failed."
-                    );
-                }
-
-
-                bookingMsg.innerHTML =
-                    `<strong>Booking request submitted successfully.</strong>
-                     <br>
-                     Booking ID: ${result.booking_id}
-                     <br>
-                     Status: Pending`;
-
-
-                bookingMsg.classList.add(
-                    "success"
-                );
-
-
-                bookingForm.reset();
-
-
-                if (locationMapBox) {
-
-                    locationMapBox.style.display =
-                        "none";
-                }
-
+                locationInput.value = `${latitude}, ${longitude}`;
 
                 if (locationStatus) {
-
-                    locationStatus.textContent =
-                        'Click "Detect My Location" and allow location access.';
+                    locationStatus.innerHTML = `<a href="${mapsUrl}" target="_blank" rel="noopener">Location detected. Open in Maps ↗</a>`;
                 }
-
-
-                if (detectLocationBtn) {
-
-                    detectLocationBtn.disabled = false;
-
-                    detectLocationBtn.textContent =
-                        "📍 Detect My Location";
+            },
+            function () {
+                if (locationStatus) {
+                    locationStatus.textContent = "Unable to detect location.";
                 }
-
-
-            } catch (error) {
-
-                bookingMsg.textContent =
-                    error.message ||
-                    "Something went wrong. Please try again.";
-
-                bookingMsg.classList.remove(
-                    "success"
-                );
-
-            } finally {
-
-                submitButton.disabled = false;
-
-                submitButton.textContent =
-                    "Submit Booking Request ↗";
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
             }
-
-        }
-    );
-
-});
+        );
+    });
+}

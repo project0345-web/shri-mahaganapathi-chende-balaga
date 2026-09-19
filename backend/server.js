@@ -76,6 +76,131 @@ const ADMIN_EMAILS =
 
 
 /* =========================
+   ADMIN AUTHENTICATION
+========================= */
+
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD;
+
+const ADMIN_KEY =
+  process.env.ADMIN_KEY;
+
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+
+app.post(
+  "/api/admin/login",
+  function (req, res) {
+
+    try {
+
+      const {
+        password
+      } = req.body;
+
+
+      if (!ADMIN_PASSWORD || !ADMIN_KEY) {
+
+        console.error(
+          "ADMIN_PASSWORD or ADMIN_KEY is missing in Render environment variables."
+        );
+
+        return res.status(500).json({
+
+          success: false,
+
+          message:
+            "Admin authentication is not configured."
+
+        });
+
+      }
+
+
+      if (
+        !password ||
+        password !== ADMIN_PASSWORD
+      ) {
+
+        return res.status(401).json({
+
+          success: false,
+
+          message:
+            "Invalid admin password."
+
+        });
+
+      }
+
+
+      return res.json({
+
+        success: true,
+
+        key: ADMIN_KEY
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Admin login error:",
+        error
+      );
+
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          "Unable to process admin login."
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ADMIN AUTH MIDDLEWARE
+========================= */
+
+function requireAdmin(req, res, next) {
+
+  const providedKey =
+    req.headers["x-admin-key"];
+
+
+  if (
+    !ADMIN_KEY ||
+    !providedKey ||
+    providedKey !== ADMIN_KEY
+  ) {
+
+    return res.status(401).json({
+
+      success: false,
+
+      message:
+        "Unauthorized."
+
+    });
+
+  }
+
+
+  next();
+
+}
+
+
+/* =========================
    DATE FORMAT
 ========================= */
 
@@ -949,10 +1074,12 @@ app.post(
 
 /* =========================
    GET BOOKINGS
+   ADMIN ONLY
 ========================= */
 
 app.get(
   "/api/bookings",
+  requireAdmin,
   async function (req, res) {
 
     try {
@@ -994,10 +1121,12 @@ app.get(
 
 /* =========================
    BOOKING STATUS
+   ADMIN ONLY
 ========================= */
 
 app.post(
   "/api/bookings/status",
+  requireAdmin,
   async function (req, res) {
 
     try {
@@ -1131,10 +1260,12 @@ app.post(
 
 /* =========================
    UPDATE BOOKING STATUS
+   ADMIN ONLY
 ========================= */
 
 app.patch(
   "/api/bookings/:id/status",
+  requireAdmin,
   async function (req, res) {
 
     try {
@@ -1333,10 +1464,12 @@ app.patch(
 
 /* =========================
    CLEAR BOOKINGS
+   ADMIN ONLY
 ========================= */
 
 app.delete(
   "/api/bookings",
+  requireAdmin,
   async function (req, res) {
 
     try {

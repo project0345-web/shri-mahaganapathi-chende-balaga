@@ -4,16 +4,173 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <meta name="description" content="Shri Mahaganapathi Chende Balaga, Mudradi — professional Chende booking for weddings, bhajans, processions, temple events and cultural occasions.">
+  <meta
+    name="description"
+    content="Shri Mahaganapathi Chende Balaga, Mudradi — professional Chende booking for weddings, bhajans, processions, temple events and cultural occasions."
+  >
 
   <title>Shri Mahaganapathi Chende Balaga | Mudradi</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+    rel="stylesheet"
+  >
 
   <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* =========================================
+       BOOKING FORM - FORCE INPUTS TO BE VISIBLE
+    ========================================= */
+
+    #bookingForm {
+      display: block !important;
+      width: 100% !important;
+      max-width: 720px !important;
+      padding: 32px !important;
+      box-sizing: border-box !important;
+      overflow: visible !important;
+    }
+
+    #bookingForm .two {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 18px !important;
+      width: 100% !important;
+    }
+
+    #bookingForm label {
+      display: block !important;
+      width: 100% !important;
+      margin-bottom: 20px !important;
+      color: #eadbc8 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      overflow: visible !important;
+      position: relative !important;
+    }
+
+    #bookingForm input,
+    #bookingForm select,
+    #bookingForm textarea {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+
+      width: 100% !important;
+      height: 50px !important;
+      min-height: 50px !important;
+
+      margin-top: 8px !important;
+      padding: 12px 14px !important;
+
+      box-sizing: border-box !important;
+
+      background: #ffffff !important;
+      color: #18130e !important;
+
+      border: 1px solid #c7b79f !important;
+      border-radius: 8px !important;
+
+      outline: none !important;
+
+      font-family: Inter, Arial, sans-serif !important;
+      font-size: 14px !important;
+
+      transform: none !important;
+      clip: auto !important;
+      clip-path: none !important;
+
+      overflow: visible !important;
+      z-index: 10 !important;
+    }
+
+    #bookingForm textarea {
+      height: 110px !important;
+      min-height: 110px !important;
+      resize: vertical !important;
+    }
+
+    #bookingForm select {
+      appearance: auto !important;
+      -webkit-appearance: auto !important;
+      cursor: pointer !important;
+    }
+
+    #bookingForm input::placeholder,
+    #bookingForm textarea::placeholder {
+      color: #777777 !important;
+      opacity: 1 !important;
+    }
+
+    #bookingForm input:focus,
+    #bookingForm select:focus,
+    #bookingForm textarea:focus {
+      border-color: #b8792d !important;
+      box-shadow: 0 0 0 3px rgba(184, 121, 45, 0.18) !important;
+    }
+
+    #bookingForm .gold {
+      display: flex !important;
+      width: 100% !important;
+      min-height: 52px !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin-top: 5px !important;
+      cursor: pointer !important;
+      border: none !important;
+    }
+
+    #bookingMsg {
+      display: block !important;
+      min-height: 20px !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    #bookingServiceStatus {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      min-height: 20px !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    #bookingServiceStatus .dot {
+      display: inline-block !important;
+      width: 8px !important;
+      height: 8px !important;
+      min-width: 8px !important;
+      border-radius: 50% !important;
+      background: #78ce8b !important;
+    }
+
+    .optional {
+      color: #c58b3a !important;
+      font-size: 9px !important;
+    }
+
+    @media (max-width: 700px) {
+      #bookingForm {
+        padding: 22px !important;
+      }
+
+      #bookingForm .two {
+        grid-template-columns: 1fr !important;
+      }
+
+      #bookingForm input,
+      #bookingForm select,
+      #bookingForm textarea {
+        font-size: 16px !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -35,15 +192,19 @@
   <header id="header">
 
     <a class="brand" href="#home">
+
       <img src="assets/logo.jpg" alt="SM Mudradi">
 
       <span>
         <b>SHRI MAHAGANAPATHI</b>
         <small>CHENDE BALAGA • MUDRADI</small>
       </span>
+
     </a>
 
-    <button id="menuBtn" aria-label="Open menu">☰</button>
+    <button id="menuBtn" type="button" aria-label="Open menu">
+      ☰
+    </button>
 
     <nav id="nav">
 
@@ -56,23 +217,42 @@
       <a href="status.html" data-i18n="navStatus">Check Status</a>
       <a href="#contact" data-i18n="navContact">Contact</a>
 
-      <button id="langBtn" class="lang-btn" type="button" aria-label="Switch language">
+      <button
+        id="langBtn"
+        class="lang-btn"
+        type="button"
+        aria-label="Switch language"
+      >
         ಕನ್ನಡ
       </button>
 
-      <button id="themeBtn" class="icon-btn" type="button" aria-label="Toggle theme">
+      <button
+        id="themeBtn"
+        class="icon-btn"
+        type="button"
+        aria-label="Toggle theme"
+      >
         ☼
       </button>
 
-      <a class="book" href="#booking" data-i18n="bookNow">
+      <a
+        class="book"
+        href="#booking"
+        data-i18n="bookNow"
+      >
         Book Now
       </a>
 
-      <a class="outline nav-status" href="status.html" data-i18n="navStatus">
+      <a
+        class="outline nav-status"
+        href="status.html"
+        data-i18n="navStatus"
+      >
         Check Status
       </a>
 
     </nav>
+
   </header>
 
   <main>
@@ -89,7 +269,10 @@
 
       <div class="hero-content reveal">
 
-        <p class="eyebrow" data-i18n="heroEyebrow">
+        <p
+          class="eyebrow"
+          data-i18n="heroEyebrow"
+        >
           TRADITION • DEVOTION • RHYTHM
         </p>
 
@@ -99,16 +282,26 @@
         </h1>
 
         <p data-i18n="heroText">
-          Experience the vibrant rhythm of Shri Mahaganapathi Chende Balaga, Mudradi for weddings, bhajans, processions, temple events and auspicious occasions.
+          Experience the vibrant rhythm of Shri Mahaganapathi Chende Balaga,
+          Mudradi for weddings, bhajans, processions, temple events and
+          auspicious occasions.
         </p>
 
         <div class="actions">
 
-          <a class="gold" href="#booking" data-i18n="heroBook">
+          <a
+            class="gold"
+            href="#booking"
+            data-i18n="heroBook"
+          >
             Book Our Balaga <span>↗</span>
           </a>
 
-          <a class="outline" href="#team" data-i18n="heroTeam">
+          <a
+            class="outline"
+            href="#team"
+            data-i18n="heroTeam"
+          >
             Meet the Team
           </a>
 
@@ -118,17 +311,23 @@
 
           <div>
             <b>10+</b>
-            <small data-i18n="statPerformers">Performers</small>
+            <small data-i18n="statPerformers">
+              Performers
+            </small>
           </div>
 
           <div>
             <b>100+</b>
-            <small data-i18n="statPrograms">Programs</small>
+            <small data-i18n="statPrograms">
+              Programs
+            </small>
           </div>
 
           <div>
             <b>100%</b>
-            <small data-i18n="statTradition">Tradition</small>
+            <small data-i18n="statTradition">
+              Tradition
+            </small>
           </div>
 
         </div>
@@ -136,10 +335,26 @@
       </div>
 
       <div class="sound-wave" aria-hidden="true">
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
-        <i></i><i></i><i></i><i></i><i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
         <i></i>
       </div>
 
@@ -153,7 +368,9 @@
 
     <div class="marquee">
       <div>
-        🥁 CHENDE • MUDRADI • KARNATAKA • TRADITION • RHYTHM • DEVOTION • SHRI MAHAGANAPATHI • CHENDE • MUDRADI • KARNATAKA • TRADITION • RHYTHM • DEVOTION •
+        🥁 CHENDE • MUDRADI • KARNATAKA • TRADITION • RHYTHM • DEVOTION •
+        SHRI MAHAGANAPATHI • CHENDE • MUDRADI • KARNATAKA • TRADITION •
+        RHYTHM • DEVOTION •
       </div>
     </div>
 
@@ -169,7 +386,10 @@
 
         <div class="reveal">
 
-          <p class="eyebrow" data-i18n="aboutEyebrow">
+          <p
+            class="eyebrow"
+            data-i18n="aboutEyebrow"
+          >
             ROOTED IN TRADITION
           </p>
 
@@ -177,15 +397,29 @@
             A rhythm that brings people <span>together.</span>
           </h2>
 
-          <p class="muted" data-i18n="aboutP1">
-            Shri Mahaganapathi Chende Balaga, Mudradi carries the vibrant tradition of Chende performance into modern celebrations while respecting the spirit and culture behind every beat.
+          <p
+            class="muted"
+            data-i18n="aboutP1"
+          >
+            Shri Mahaganapathi Chende Balaga, Mudradi carries the vibrant
+            tradition of Chende performance into modern celebrations while
+            respecting the spirit and culture behind every beat.
           </p>
 
-          <p class="muted" data-i18n="aboutP2">
-            From sacred temple occasions to joyful weddings and processions, our team brings disciplined rhythm, energy and a memorable traditional atmosphere.
+          <p
+            class="muted"
+            data-i18n="aboutP2"
+          >
+            From sacred temple occasions to joyful weddings and processions,
+            our team brings disciplined rhythm, energy and a memorable
+            traditional atmosphere.
           </p>
 
-          <a class="text-link" href="#booking" data-i18n="aboutLink">
+          <a
+            class="text-link"
+            href="#booking"
+            data-i18n="aboutLink"
+          >
             Plan a performance →
           </a>
 
@@ -210,7 +444,10 @@
 
     <!-- SERVICES -->
 
-    <section id="services" class="section services">
+    <section
+      id="services"
+      class="section services"
+    >
 
       <p class="label">
         02 / <span data-i18n="labelOccasions">OCCASIONS</span>
@@ -220,7 +457,10 @@
 
         <div>
 
-          <p class="eyebrow" data-i18n="servicesEyebrow">
+          <p
+            class="eyebrow"
+            data-i18n="servicesEyebrow"
+          >
             PERFORM WITH US
           </p>
 
@@ -230,8 +470,12 @@
 
         </div>
 
-        <p class="muted" data-i18n="servicesText">
-          Choose a traditional Chende performance that matches the scale and spirit of your occasion.
+        <p
+          class="muted"
+          data-i18n="servicesText"
+        >
+          Choose a traditional Chende performance that matches the scale and
+          spirit of your occasion.
         </p>
 
       </div>
@@ -241,36 +485,56 @@
         <article class="reveal">
           <i>01</i>
           <strong>💍</strong>
-          <h3 data-i18n="wedding">Weddings</h3>
+
+          <h3 data-i18n="wedding">
+            Weddings
+          </h3>
+
           <p data-i18n="weddingText">
-            Grand Chende performances for entrances, processions and wedding celebrations.
+            Grand Chende performances for entrances, processions and wedding
+            celebrations.
           </p>
         </article>
 
         <article class="reveal">
           <i>02</i>
           <strong>🛕</strong>
-          <h3 data-i18n="temple">Temple Events</h3>
+
+          <h3 data-i18n="temple">
+            Temple Events
+          </h3>
+
           <p data-i18n="templeText">
-            Traditional performances for temple programs, festivals and auspicious occasions.
+            Traditional performances for temple programs, festivals and
+            auspicious occasions.
           </p>
         </article>
 
         <article class="reveal">
           <i>03</i>
           <strong>🎊</strong>
-          <h3 data-i18n="procession">Processions</h3>
+
+          <h3 data-i18n="procession">
+            Processions
+          </h3>
+
           <p data-i18n="processionText">
-            High-energy rhythm for processions, community celebrations and public events.
+            High-energy rhythm for processions, community celebrations and
+            public events.
           </p>
         </article>
 
         <article class="reveal">
           <i>04</i>
           <strong>🎶</strong>
-          <h3 data-i18n="bhajan">Bhajans & Culture</h3>
+
+          <h3 data-i18n="bhajan">
+            Bhajans & Culture
+          </h3>
+
           <p data-i18n="bhajanText">
-            Rhythm support for bhajans, cultural programs and local celebrations.
+            Rhythm support for bhajans, cultural programs and local
+            celebrations.
           </p>
         </article>
 
@@ -282,7 +546,10 @@
 
     <section id="team" class="team">
 
-      <img src="assets/team.jpg" alt="Shri Mahaganapathi Chende Balaga team">
+      <img
+        src="assets/team.jpg"
+        alt="Shri Mahaganapathi Chende Balaga team"
+      >
 
       <div class="team-glow"></div>
       <div class="team-shade"></div>
@@ -299,10 +566,15 @@
         </h2>
 
         <p data-i18n="teamText">
-          Our performers bring discipline, tradition and collective energy. The sound is powerful because the team moves as one.
+          Our performers bring discipline, tradition and collective energy.
+          The sound is powerful because the team moves as one.
         </p>
 
-        <a class="gold" href="#booking" data-i18n="teamBook">
+        <a
+          class="gold"
+          href="#booking"
+          data-i18n="teamBook"
+        >
           Request Booking ↗
         </a>
 
@@ -328,7 +600,10 @@
 
         <div>
 
-          <p class="eyebrow" data-i18n="galleryEyebrow">
+          <p
+            class="eyebrow"
+            data-i18n="galleryEyebrow"
+          >
             THE SOUND HAS A LOOK
           </p>
 
@@ -343,18 +618,42 @@
       <div class="gallery">
 
         <figure class="large reveal">
-          <img src="assets/chende-drum-bg.png" alt="Chende drum">
-          <figcaption>THE CHENDE</figcaption>
+
+          <img
+            src="assets/chende-drum-bg.png"
+            alt="Chende drum"
+          >
+
+          <figcaption>
+            THE CHENDE
+          </figcaption>
+
         </figure>
 
         <figure class="reveal">
-          <img src="assets/logo.jpg" alt="SM Mudradi logo">
-          <figcaption>OUR IDENTITY</figcaption>
+
+          <img
+            src="assets/logo.jpg"
+            alt="SM Mudradi logo"
+          >
+
+          <figcaption>
+            OUR IDENTITY
+          </figcaption>
+
         </figure>
 
         <figure class="reveal">
-          <img src="assets/team.jpg" alt="Chende team">
-          <figcaption>OUR BALAGA</figcaption>
+
+          <img
+            src="assets/team.jpg"
+            alt="Chende team"
+          >
+
+          <figcaption>
+            OUR BALAGA
+          </figcaption>
+
         </figure>
 
       </div>
@@ -373,7 +672,10 @@
 
         <div class="reveal">
 
-          <p class="eyebrow" data-i18n="bookingEyebrow">
+          <p
+            class="eyebrow"
+            data-i18n="bookingEyebrow"
+          >
             MAKE YOUR DATE SPECIAL
           </p>
 
@@ -382,67 +684,112 @@
           </h2>
 
           <p data-i18n="bookingText">
-            Send your event details and submit a booking request. Our team will contact you to confirm the Chende booking.
+            Send your event details and submit a booking request. Our team
+            will contact you to confirm the Chende booking.
           </p>
 
           <div class="contact-mini">
 
             <a href="tel:+918971474693">
-              <span class="contact-icon phone-icon">☎</span>
+
+              <span class="contact-icon phone-icon">
+                ☎
+              </span>
+
               <span>
                 <small>PHONE</small>
                 <b>89714 74693</b>
               </span>
+
             </a>
 
-            <a href="https://wa.me/918971474693" target="_blank" rel="noopener">
-              <span class="contact-icon wa-icon">◔</span>
+            <a
+              href="https://wa.me/918971474693"
+              target="_blank"
+              rel="noopener"
+            >
+
+              <span class="contact-icon wa-icon">
+                ◔
+              </span>
+
               <span>
                 <small>WHATSAPP</small>
                 <b>89714 74693</b>
               </span>
+
             </a>
 
             <a href="mailto:akshaybhandary434@gmail.com">
-              <span class="contact-icon mail-icon">✉</span>
+
+              <span class="contact-icon mail-icon">
+                ✉
+              </span>
+
               <span>
                 <small>EMAIL</small>
                 <b>akshaybhandary434@gmail.com</b>
               </span>
+
             </a>
 
-            <a href="https://www.google.com/maps/search/?api=1&query=Mudradi%2C%20Karnataka" target="_blank" rel="noopener">
-              <span class="contact-icon pin-icon">⌖</span>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Mudradi%2C%20Karnataka"
+              target="_blank"
+              rel="noopener"
+            >
+
+              <span class="contact-icon pin-icon">
+                ⌖
+              </span>
+
               <span>
                 <small>LOCATION</small>
                 <b>Mudradi, Karnataka</b>
               </span>
+
             </a>
 
           </div>
 
         </div>
 
-        <form id="bookingForm" class="form reveal">
+        <!-- BOOKING FORM -->
+
+        <form
+          id="bookingForm"
+          class="form reveal"
+          autocomplete="on"
+        >
 
           <div class="two">
 
             <label data-i18n="nameLabel">
+
               Full Name
+
               <input
+                type="text"
                 name="customer_name"
                 required
+                autocomplete="name"
                 placeholder="Your name"
               >
+
             </label>
 
             <label data-i18n="phoneLabel">
+
               Phone
+
               <input
+                type="tel"
                 name="phone"
                 required
+                autocomplete="tel"
                 placeholder="Mobile number"
               >
+
             </label>
 
           </div>
@@ -450,25 +797,58 @@
           <div class="two">
 
             <label data-i18n="emailLabel">
-              Email <span class="optional">(Optional)</span>
+
+              Email
+              <span class="optional">
+                (Optional)
+              </span>
+
               <input
-                name="email"
                 type="email"
+                name="email"
+                autocomplete="email"
                 placeholder="you@example.com"
               >
+
             </label>
 
             <label data-i18n="eventLabel">
+
               Event Type
 
-              <select name="event_type" required>
-                <option value="">Select</option>
-                <option>Wedding</option>
-                <option>Bhajan</option>
-                <option>Procession</option>
-                <option>Temple Event</option>
-                <option>Cultural Program</option>
-                <option>Other</option>
+              <select
+                name="event_type"
+                required
+              >
+
+                <option value="">
+                  Select
+                </option>
+
+                <option value="Wedding">
+                  Wedding
+                </option>
+
+                <option value="Bhajan">
+                  Bhajan
+                </option>
+
+                <option value="Procession">
+                  Procession
+                </option>
+
+                <option value="Temple Event">
+                  Temple Event
+                </option>
+
+                <option value="Cultural Program">
+                  Cultural Program
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
               </select>
 
             </label>
@@ -478,40 +858,52 @@
           <div class="two">
 
             <label data-i18n="dateLabel">
+
               Event Date
+
               <input
                 name="event_date"
                 type="date"
                 required
               >
+
             </label>
 
             <label data-i18n="timeLabel">
+
               Start Time
+
               <input
                 name="start_time"
                 type="time"
                 required
               >
+
             </label>
 
           </div>
 
           <label data-i18n="locationLabel">
+
             Venue / Location
+
             <input
+              type="text"
               name="location"
               required
+              autocomplete="street-address"
               placeholder="Venue and town"
             >
+
           </label>
 
           <label data-i18n="messageLabel">
+
             Additional Requirements
 
             <textarea
               name="message"
-              rows="3"
+              rows="4"
               placeholder="Tell us about your event..."
             ></textarea>
 
@@ -526,11 +918,22 @@
             Submit Booking Request ↗
           </button>
 
-          <p id="bookingMsg" role="status"></p>
+          <p
+            id="bookingMsg"
+            role="status"
+          ></p>
 
-          <div id="bookingServiceStatus" class="booking-service-status">
+          <div
+            id="bookingServiceStatus"
+            class="booking-service-status"
+          >
+
             <span class="dot"></span>
-            <span>Checking booking service…</span>
+
+            <span>
+              Checking booking service...
+            </span>
+
           </div>
 
         </form>
@@ -557,7 +960,10 @@
 
     <!-- CONTACT -->
 
-    <section id="contact" class="section contact">
+    <section
+      id="contact"
+      class="section contact"
+    >
 
       <p class="label">
         06 / <span data-i18n="labelContact">CONTACT</span>
@@ -567,7 +973,10 @@
 
         <div class="reveal">
 
-          <p class="eyebrow" data-i18n="contactEyebrow">
+          <p
+            class="eyebrow"
+            data-i18n="contactEyebrow"
+          >
             LET'S TALK
           </p>
 
@@ -575,7 +984,10 @@
             Bring the <span>Chende</span> to your occasion.
           </h2>
 
-          <p class="muted" data-i18n="contactText">
+          <p
+            class="muted"
+            data-i18n="contactText"
+          >
             Call, WhatsApp or email us for availability and booking details.
           </p>
 
@@ -584,51 +996,85 @@
         <div class="details reveal">
 
           <a href="tel:+918971474693">
-            <span class="detail-icon">☎</span>
+
+            <span class="detail-icon">
+              ☎
+            </span>
+
             <span>
               <small>PHONE</small>
               <b>89714 74693</b>
             </span>
+
           </a>
 
           <a href="tel:+918277069598">
-            <span class="detail-icon">☎</span>
+
+            <span class="detail-icon">
+              ☎
+            </span>
+
             <span>
               <small>PHONE</small>
               <b>82770 69598</b>
             </span>
+
           </a>
 
           <a href="tel:+919844667599">
-            <span class="detail-icon">☎</span>
+
+            <span class="detail-icon">
+              ☎
+            </span>
+
             <span>
               <small>PHONE</small>
               <b>98446 67599</b>
             </span>
+
           </a>
 
-          <a href="https://wa.me/918277069598" target="_blank" rel="noopener">
-            <span class="detail-icon wa">◔</span>
+          <a
+            href="https://wa.me/918277069598"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="detail-icon wa">
+              ◔
+            </span>
+
             <span>
               <small>WHATSAPP</small>
               <b>82770 69598</b>
             </span>
+
           </a>
 
           <a href="mailto:nagarajkshettigar@gmail.com">
-            <span class="detail-icon">✉</span>
+
+            <span class="detail-icon">
+              ✉
+            </span>
+
             <span>
               <small>EMAIL</small>
               <b>nagarajkshettigar@gmail.com</b>
             </span>
+
           </a>
 
           <a href="mailto:ankithanku988@gmail.com">
-            <span class="detail-icon">✉</span>
+
+            <span class="detail-icon">
+              ✉
+            </span>
+
             <span>
               <small>EMAIL</small>
               <b>ankithanku988@gmail.com</b>
             </span>
+
           </a>
 
           <a
@@ -637,12 +1083,16 @@
             target="_blank"
             rel="noopener"
           >
-            <span class="detail-icon">⌖</span>
+
+            <span class="detail-icon">
+              ⌖
+            </span>
 
             <span>
               <small>LOCATION</small>
               <b>Mudradi, Karnataka • Open in Maps ↗</b>
             </span>
+
           </a>
 
         </div>
@@ -659,7 +1109,10 @@
 
     <div class="footer-brand">
 
-      <img src="assets/logo.jpg" alt="SM Mudradi">
+      <img
+        src="assets/logo.jpg"
+        alt="SM Mudradi"
+      >
 
       <b>
         SHRI MAHAGANAPATHI CHENDE BALAGA<br>

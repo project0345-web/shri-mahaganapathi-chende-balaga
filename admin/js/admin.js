@@ -9,6 +9,59 @@ const loginScreen =
 
 
 /* =========================================================
+   SAFE JSON RESPONSE
+========================================================= */
+
+async function readResponse(response) {
+
+    const contentType =
+        response.headers.get('content-type') || '';
+
+    const text =
+        await response.text();
+
+    if (
+        contentType.includes('application/json')
+    ) {
+
+        try {
+
+            return JSON.parse(text);
+
+        } catch (error) {
+
+            throw new Error(
+                'Server returned invalid JSON.'
+            );
+
+        }
+
+    }
+
+    /*
+       Server returned HTML or another non-JSON response.
+       This prevents:
+       Unexpected token '<'
+    */
+
+    if (text.trim().startsWith('<!DOCTYPE') ||
+        text.trim().startsWith('<html')) {
+
+        throw new Error(
+            `Server returned an HTML page instead of API JSON. HTTP ${response.status}.`
+        );
+
+    }
+
+    throw new Error(
+        text.trim() ||
+        `Server returned HTTP ${response.status}.`
+    );
+
+}
+
+
+/* =========================================================
    SHOW / HIDE APP
 ========================================================= */
 
@@ -39,28 +92,22 @@ function makeParticles() {
 
     if (!box) return;
 
-
     for (let i = 0; i < 34; i++) {
 
         const p =
             document.createElement('i');
 
-
         p.style.left =
             Math.random() * 100 + '%';
-
 
         p.style.animationDelay =
             (-Math.random() * 11) + 's';
 
-
         p.style.animationDuration =
             (8 + Math.random() * 8) + 's';
 
-
         p.style.opacity =
             0.2 + Math.random() * 0.5;
-
 
         box.appendChild(p);
 
@@ -83,7 +130,6 @@ window.addEventListener(
             document.getElementById(
                 'cursorGlow'
             );
-
 
         if (glow) {
 
@@ -134,34 +180,39 @@ document
 
             e.preventDefault();
 
-
             const msg =
                 document.getElementById(
                     'loginMsg'
                 );
-
 
             const password =
                 document.getElementById(
                     'adminPassword'
                 );
 
+            if (!password) {
+
+                return;
+
+            }
 
             msg.textContent =
                 'Signing in…';
-
 
             try {
 
                 const response =
                     await fetch(
-                        API + '/admin/login',
+                        `${API}/admin/login`,
                         {
 
                             method: 'POST',
 
                             headers: {
                                 'Content-Type':
+                                    'application/json',
+
+                                'Accept':
                                     'application/json'
                             },
 
@@ -176,14 +227,26 @@ document
 
 
                 const data =
-                    await response.json();
+                    await readResponse(
+                        response
+                    );
 
 
                 if (!response.ok) {
 
                     throw new Error(
-                        data.error ||
-                        'Login failed'
+                        data?.error ||
+                        data?.message ||
+                        'Login failed.'
+                    );
+
+                }
+
+
+                if (!data?.key) {
+
+                    throw new Error(
+                        'Login succeeded, but the server did not return an admin key.'
                     );
 
                 }
@@ -201,10 +264,17 @@ document
 
                 showApp();
 
+
             } catch (error) {
 
+                console.error(
+                    'Admin login error:',
+                    error
+                );
+
                 msg.textContent =
-                    error.message;
+                    error.message ||
+                    'Unable to sign in.';
 
             }
 
@@ -268,12 +338,10 @@ function formatDate(dateValue) {
 
     }
 
-
     try {
 
         const date =
             new Date(dateValue);
-
 
         if (
             Number.isNaN(
@@ -284,7 +352,6 @@ function formatDate(dateValue) {
             return esc(dateValue);
 
         }
-
 
         return date.toLocaleDateString(
             'en-GB',
@@ -322,11 +389,9 @@ function formatTime(timeValue) {
 
     }
 
-
     const parts =
         String(timeValue)
             .split(':');
-
 
     if (parts.length < 2) {
 
@@ -334,17 +399,14 @@ function formatTime(timeValue) {
 
     }
 
-
     let hours =
         parseInt(
             parts[0],
             10
         );
 
-
     const minutes =
         parts[1];
-
 
     if (Number.isNaN(hours)) {
 
@@ -352,23 +414,19 @@ function formatTime(timeValue) {
 
     }
 
-
     const period =
         hours >= 12
             ? 'PM'
             : 'AM';
 
-
     hours =
         hours % 12;
-
 
     if (hours === 0) {
 
         hours = 12;
 
     }
-
 
     return `${hours}:${minutes} ${period}`;
 
@@ -392,10 +450,8 @@ async function setStatus(
 
     };
 
-
     const action =
         labels[status];
-
 
     if (!action) {
 
@@ -403,19 +459,16 @@ async function setStatus(
 
     }
 
-
     const confirmed =
         confirm(
             `${action} booking #${id}?`
         );
-
 
     if (!confirmed) {
 
         return;
 
     }
-
 
     try {
 
@@ -429,6 +482,9 @@ async function setStatus(
                     headers: {
 
                         'Content-Type':
+                            'application/json',
+
+                        'Accept':
                             'application/json',
 
                         'X-Admin-Key':
@@ -446,12 +502,10 @@ async function setStatus(
 
 
         const data =
-            await response.json();
+            await readResponse(
+                response
+            );
 
-
-        /* =========================
-           ADMIN SESSION EXPIRED
-        ========================= */
 
         if (
             response.status === 401
@@ -468,31 +522,30 @@ async function setStatus(
         }
 
 
-        /* =========================
-           BACKEND ERROR
-        ========================= */
-
         if (!response.ok) {
 
             throw new Error(
-                data.error ||
+                data?.error ||
+                data?.message ||
                 'Could not update booking.'
             );
 
         }
 
 
-        /* =========================
-           REFRESH DASHBOARD
-        ========================= */
-
         await load();
 
 
     } catch (error) {
 
+        console.error(
+            'Status update error:',
+            error
+        );
+
         alert(
-            error.message
+            error.message ||
+            'Could not update booking.'
         );
 
     }
@@ -505,11 +558,6 @@ async function setStatus(
 ========================================================= */
 
 function actions(booking) {
-
-    /*
-       PENDING BOOKINGS:
-       ACCEPT + REJECT
-    */
 
     if (
         booking.status ===
@@ -539,11 +587,6 @@ function actions(booking) {
     }
 
 
-    /*
-       ACCEPTED BOOKINGS:
-       NO MORE ACTIONS
-    */
-
     if (
         booking.status ===
         'accepted'
@@ -562,11 +605,6 @@ function actions(booking) {
     }
 
 
-    /*
-       REJECTED BOOKINGS:
-       NO MORE ACTIONS
-    */
-
     if (
         booking.status ===
         'rejected'
@@ -583,11 +621,6 @@ function actions(booking) {
         `;
 
     }
-
-
-    /*
-       Unknown/old database status.
-    */
 
     return '';
 
@@ -608,15 +641,19 @@ async function load() {
 
     }
 
-
     try {
 
         const response =
             await fetch(
-                API + '/bookings',
+                `${API}/bookings`,
                 {
 
+                    method: 'GET',
+
                     headers: {
+
+                        'Accept':
+                            'application/json',
 
                         'X-Admin-Key':
                             key()
@@ -628,12 +665,10 @@ async function load() {
 
 
         const data =
-            await response.json();
+            await readResponse(
+                response
+            );
 
-
-        /* =========================
-           SESSION EXPIRED
-        ========================= */
 
         if (
             response.status === 401
@@ -653,16 +688,13 @@ async function load() {
         if (!response.ok) {
 
             throw new Error(
-                data.error ||
-                'Failed to load bookings'
+                data?.error ||
+                data?.message ||
+                'Failed to load bookings.'
             );
 
         }
 
-
-        /* =========================
-           SAFETY CHECK
-        ========================= */
 
         if (!Array.isArray(data)) {
 
@@ -705,15 +737,14 @@ async function load() {
             ).length;
 
 
-        /* =========================
+        /* =================================================
            TOTAL
-        ========================= */
+        ================================================= */
 
         const countElement =
             document.getElementById(
                 'count'
             );
-
 
         if (countElement) {
 
@@ -723,15 +754,14 @@ async function load() {
         }
 
 
-        /* =========================
+        /* =================================================
            PENDING
-        ========================= */
+        ================================================= */
 
         const pendingElement =
             document.getElementById(
                 'pending'
             );
-
 
         if (pendingElement) {
 
@@ -741,15 +771,14 @@ async function load() {
         }
 
 
-        /* =========================
+        /* =================================================
            ACCEPTED
-        ========================= */
+        ================================================= */
 
         const acceptedElement =
             document.getElementById(
                 'accepted'
             );
-
 
         if (acceptedElement) {
 
@@ -759,15 +788,14 @@ async function load() {
         }
 
 
-        /* =========================
+        /* =================================================
            REJECTED
-        ========================= */
+        ================================================= */
 
         const rejectedElement =
             document.getElementById(
                 'rejected'
             );
-
 
         if (rejectedElement) {
 
@@ -786,7 +814,6 @@ async function load() {
                 'rows'
             );
 
-
         if (!rows) {
 
             return;
@@ -804,7 +831,6 @@ async function load() {
                                 booking.event_date
                             );
 
-
                         const displayTime =
                             formatTime(
                                 booking.start_time
@@ -815,8 +841,6 @@ async function load() {
 
                             <tr>
 
-                                <!-- BOOKING ID -->
-
                                 <td>
 
                                     #${esc(
@@ -825,8 +849,6 @@ async function load() {
 
                                 </td>
 
-
-                                <!-- CUSTOMER -->
 
                                 <td>
 
@@ -882,8 +904,6 @@ async function load() {
                                 </td>
 
 
-                                <!-- EVENT -->
-
                                 <td>
 
                                     ${esc(
@@ -892,8 +912,6 @@ async function load() {
 
                                 </td>
 
-
-                                <!-- DATE / TIME -->
 
                                 <td>
 
@@ -910,8 +928,6 @@ async function load() {
                                 </td>
 
 
-                                <!-- LOCATION -->
-
                                 <td>
 
                                     ${esc(
@@ -920,8 +936,6 @@ async function load() {
 
                                 </td>
 
-
-                                <!-- STATUS -->
 
                                 <td>
 
@@ -938,8 +952,6 @@ async function load() {
 
                                 </td>
 
-
-                                <!-- ACTIONS -->
 
                                 <td
                                     class="actions">
@@ -959,9 +971,9 @@ async function load() {
                 .join('');
 
 
-        /* =========================
+        /* =================================================
            EMPTY TABLE
-        ========================= */
+        ================================================= */
 
         if (!data.length) {
 
@@ -1004,8 +1016,10 @@ async function load() {
 
                     <td colspan="7">
 
-                        Unable to load bookings.
-                        Check that the backend is running.
+                        ${esc(
+                            error.message ||
+                            'Unable to load bookings.'
+                        )}
 
                     </td>
 

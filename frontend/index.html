@@ -39,10 +39,6 @@
       opacity: 1 !important;
     }
 
-    /* IMPORTANT:
-       Do not use reveal animation on booking form.
-    */
-
     #bookingForm {
       display: block !important;
       visibility: visible !important;
@@ -72,9 +68,7 @@
 
     #bookingForm label {
       display: block !important;
-
       width: 100% !important;
-
       margin: 0 0 20px 0 !important;
 
       color: #eadbc8 !important;
@@ -83,7 +77,6 @@
       opacity: 1 !important;
 
       position: relative !important;
-
       overflow: visible !important;
     }
 
@@ -132,14 +125,12 @@
     #bookingForm textarea {
       height: 110px !important;
       min-height: 110px !important;
-
       resize: vertical !important;
     }
 
     #bookingForm select {
       appearance: auto !important;
       -webkit-appearance: auto !important;
-
       cursor: pointer !important;
     }
 
@@ -1148,7 +1139,26 @@
           </div>
 
 
-          <!-- LOCATION FIELD REMOVED -->
+          <!-- VENUE / LOCATION -->
+
+          <label>
+
+            <span data-i18n="locationLabel">
+              Venue / Location
+            </span>
+
+            <input
+              type="text"
+              name="location"
+              required
+              autocomplete="street-address"
+              placeholder="Enter venue or location"
+            >
+
+          </label>
+
+
+          <!-- ADDITIONAL REQUIREMENTS -->
 
           <label>
 
